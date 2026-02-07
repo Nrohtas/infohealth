@@ -43,6 +43,7 @@ export default function Home() {
   const yearParam = searchParams.get('year');
   const year = yearParam ? Number(yearParam) : 2568;
 
+  const affiliation = searchParams.get('affiliation') || '';
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -50,7 +51,7 @@ export default function Home() {
     async function fetchStats() {
       setLoading(true);
       try {
-        const res = await fetch(`/api/stats?year=${year}`);
+        const res = await fetch(`/api/stats?year=${year}&affiliation=${affiliation}`);
         const data = await res.json();
         setStats(data);
       } catch (error) {
@@ -60,7 +61,7 @@ export default function Home() {
       }
     }
     fetchStats();
-  }, [year]);
+  }, [year, affiliation]);
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('th-TH').format(num);
@@ -146,7 +147,7 @@ export default function Home() {
                 <div key={i} className="dasher-card p-6 h-48 animate-pulse bg-gray-50/50" />
               ))
             ) : stats?.districts?.map((district) => (
-              <Link href={`/district/${district.ampurcode}?year=${year}`} key={district.ampurcode}>
+              <Link href={`/district/${district.ampurcode}?year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`} key={district.ampurcode}>
                 <motion.div
                   whileHover={{ y: -5, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}

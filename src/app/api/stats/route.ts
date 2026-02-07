@@ -6,19 +6,32 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const yearParam = searchParams.get('year') || '2568';
+        const affiliation = searchParams.get('affiliation');
         const year = parseInt(yearParam, 10);
 
-        // Basic validation: Year must be 2568 (for now, can expand later)
-        // If we want to allow other years, we'd need to check if table exists or use a try/catch on query
-        // Logic: popTable = pop{YY}06, houseTable = house{YYYY}
+        // ... (existing code for table derivation and validation) ...
 
         const yy = String(year).slice(-2);
         const popTable = `pop${yy}06`;
         const houseTable = `house${year}`;
 
-        // Validate table names to prevent SQL injection (simple alphanumeric check)
+        // Validate table names
         if (!/^[a-zA-Z0-9]+$/.test(popTable) || !/^[a-zA-Z0-9]+$/.test(houseTable)) {
             return NextResponse.json({ error: 'Invalid year parameter' }, { status: 400 });
+        }
+
+        // Affiliation Filter Logic
+        let affiliationJoin = "";
+        let affiliationFilter = "";
+        if (affiliation) {
+            affiliationJoin = " JOIN chospital_plk h ON p.hospcode = h.hospcode ";
+            if (affiliation === 'moph') {
+                affiliationFilter = " AND h.hostype_new IN ('5', '7', '8', '11', '18')";
+            } else if (affiliation === 'local') {
+                affiliationFilter = " AND h.hostype_new = '21'";
+            } else if (affiliation === 'other') {
+                affiliationFilter = " AND h.hostype_new NOT IN ('5', '7', '8', '11', '18', '21')";
+            }
         }
 
         let midYearPopulation = 0;
@@ -27,14 +40,15 @@ export async function GET(request: Request) {
         let totalHospitals = 0;
         let districtsMap = new Map();
 
-        // Get Totals filtered by Province 65 (Phitsanulok) AND Districts 6501-6509
+        // Get Totals filtered by Affiliation if provided
         const [statsRows] = await pool.query<RowDataPacket[]>(`
             SELECT 
-                SUM(CAST(popall AS UNSIGNED)) as pop,
-                COUNT(DISTINCT villagecode) as villages,
-                COUNT(DISTINCT hospcode) as hospitals
-            FROM ${popTable} 
-            WHERE provincecode = '65' AND ampurcode BETWEEN '6501' AND '6509'
+                SUM(CAST(p.popall AS UNSIGNED)) as pop,
+                COUNT(DISTINCT p.villagecode) as villages,
+                COUNT(DISTINCT p.hospcode) as hospitals
+            FROM ${popTable} p
+            ${affiliationJoin}
+            WHERE p.provincecode = '65' AND p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter}
         `);
         midYearPopulation = statsRows[0]?.pop || 0;
         totalVillages = statsRows[0]?.villages || 0;
@@ -42,11 +56,12 @@ export async function GET(request: Request) {
 
         // Get District Population Breakdown
         const [popDistRows] = await pool.query<RowDataPacket[]>(`
-            SELECT ampurcode, ampurname, SUM(CAST(popall AS UNSIGNED)) as pop 
-            FROM ${popTable} 
-            WHERE provincecode = '65' AND ampurcode BETWEEN '6501' AND '6509'
-            GROUP BY ampurcode, ampurname
-            ORDER BY ampurcode
+            SELECT p.ampurcode, p.ampurname, SUM(CAST(p.popall AS UNSIGNED)) as pop 
+            FROM ${popTable} p
+            ${affiliationJoin}
+            WHERE p.provincecode = '65' AND p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter}
+            GROUP BY p.ampurcode, p.ampurname
+            ORDER BY p.ampurcode
         `);
 
         popDistRows.forEach((row: any) => {
@@ -61,18 +76,20 @@ export async function GET(request: Request) {
         // Only query households if it's not 2567 (missing table)
         if (year !== 2567) {
             const [houseTotalRows] = await pool.query<RowDataPacket[]>(`
-                SELECT SUM(CAST(household AS UNSIGNED)) as household 
-                FROM ${houseTable} 
-                WHERE ampurcode BETWEEN '6501' AND '6509'
+                SELECT SUM(CAST(p.household AS UNSIGNED)) as household 
+                FROM ${houseTable} p
+                ${affiliationJoin}
+                WHERE p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter}
             `);
             households = houseTotalRows[0]?.household || 0;
 
             const [houseDistRows] = await pool.query<RowDataPacket[]>(`
-                SELECT ampurcode, ampurname, SUM(CAST(household AS UNSIGNED)) as house 
-                FROM ${houseTable} 
-                WHERE ampurcode BETWEEN '6501' AND '6509'
-                GROUP BY ampurcode, ampurname
-                ORDER BY ampurcode
+                SELECT p.ampurcode, p.ampurname, SUM(CAST(p.household AS UNSIGNED)) as house 
+                FROM ${houseTable} p
+                ${affiliationJoin}
+                WHERE p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter}
+                GROUP BY p.ampurcode, p.ampurname
+                ORDER BY p.ampurcode
             `);
 
             houseDistRows.forEach((row: any) => {

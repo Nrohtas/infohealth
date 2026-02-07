@@ -7,6 +7,7 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url);
         const ampurcode = searchParams.get('ampurcode');
         const yearParam = searchParams.get('year') || '2568';
+        const affiliation = searchParams.get('affiliation'); // moph, local, other
         const year = parseInt(yearParam, 10);
 
         if (!ampurcode) {
@@ -28,16 +29,27 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'Invalid year parameter' }, { status: 400 });
         }
 
+        // Affiliation Filter Logic
+        let affiliationFilter = '';
+        if (affiliation === 'moph') {
+            affiliationFilter = " AND h.hostype_new IN ('5', '7', '8', '11', '18')";
+        } else if (affiliation === 'local') {
+            affiliationFilter = " AND h.hostype_new = '21'";
+        } else if (affiliation === 'other') {
+            affiliationFilter = " AND h.hostype_new NOT IN ('5', '7', '8', '11', '18', '21')";
+        }
+
         // Query hospitals with Population and Household counts
         const [rows] = await pool.query<RowDataPacket[]>(`
             SELECT 
                 h.hospcode, 
                 h.hospname, 
                 h.tmb_name,
+                h.hostype_new,
                 (SELECT SUM(CAST(popall AS UNSIGNED)) FROM ${popTable} WHERE hospcode = h.hospcode) as population,
                 ${year === 2567 ? 'NULL' : `(SELECT SUM(CAST(household AS UNSIGNED)) FROM ${houseTable} WHERE hospcode = h.hospcode)`} as households
             FROM chospital_plk h
-            WHERE h.provcode = '65' AND h.amp_code = ?
+            WHERE h.provcode = '65' AND h.amp_code = ? ${affiliationFilter}
             ORDER BY h.hospcode
         `, [ampurcode]);
 

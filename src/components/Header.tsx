@@ -1,6 +1,8 @@
+import Link from 'next/link';
+
 const Header = () => {
   return (
-    <header className="py-4 bg-white/95 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between px-4 md:px-8 relative z-40 shadow-sm">
+    <header className="py-4 bg-purple-50/95 backdrop-blur-sm border-b border-purple-100 flex items-center justify-between px-4 md:px-8 relative z-40 shadow-sm">
       <div className="flex items-center gap-4">
         {/* Logo Placeholder */}
         <div className="w-12 h-12 relative flex-shrink-0">
@@ -16,13 +18,13 @@ const Header = () => {
         </div>
 
         <div className="flex flex-col">
-          <h1 className="text-teal-600/90 text-lg md:text-xl font-bold tracking-tight">
-            สำนักงานสาธารณสุขจังหวัดพิษณุโลก
+          <h1 className="text-teal-600/90 text-lg md:text-xl font-bold tracking-tight hover:text-teal-800 transition-colors">
+            <Link href="/">สำนักงานสาธารณสุขจังหวัดพิษณุโลก</Link>
           </h1>
           <div className="flex items-center gap-2 text-sm md:text-base">
-            <span className="text-purple-700 font-bold">กลุ่มงานสุขภาพดิจิทัล</span>
+            <Link href="/" className="text-purple-700 font-bold hover:text-purple-900 transition-colors">กลุ่มงานสุขภาพดิจิทัล</Link>
             <div className="h-4 w-px bg-gray-300 mx-1"></div>
-            <span className="text-gray-500 font-medium">ข้อมูลพื้นฐาน</span>
+            <Link href="/" className="text-gray-500 font-medium hover:text-teal-600 transition-colors">ข้อมูลพื้นฐาน</Link>
           </div>
         </div>
       </div>

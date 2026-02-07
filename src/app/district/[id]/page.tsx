@@ -11,6 +11,7 @@ interface Hospital {
     tmb_name: string;
     population: number;
     households: number;
+    hostype_new: string;
 }
 
 interface PageProps {
@@ -45,9 +46,10 @@ export default function DistrictPage({ params }: PageProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
 
-    // Derived year from URL
+    // Derived year and affiliation from URL
     const yearParam = searchParams.get('year');
     const year = yearParam ? Number(yearParam) : 2568;
+    const affiliation = searchParams.get('affiliation') || '';
 
     const [hospitals, setHospitals] = useState<Hospital[]>([]);
     const [districtTotal, setDistrictTotal] = useState({ population: 0, households: 0 });
@@ -75,7 +77,7 @@ export default function DistrictPage({ params }: PageProps) {
             setLoading(true);
             try {
                 // Fetch hospitals & totals
-                const hospRes = await fetch(`/api/hospitals?ampurcode=${id}&year=${year}`);
+                const hospRes = await fetch(`/api/hospitals?ampurcode=${id}&year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`);
                 const hospData = await hospRes.json();
                 setHospitals(hospData.hospitals || []);
                 setDistrictTotal(hospData.districtTotal || { population: 0, households: 0 });
@@ -102,29 +104,38 @@ export default function DistrictPage({ params }: PageProps) {
             }
         }
         fetchData();
-    }, [id, year]);
+    }, [id, year, affiliation]);
 
     const toggleExpand = (hospcode: string) => {
         setExpandedHosp(expandedHosp === hospcode ? null : hospcode);
     };
 
+    const getHostColor = (hostype: string) => {
+        const greenTypes = ['5', '7', '8', '11', '18'];
+        const purpleTypes = ['21'];
+
+        if (greenTypes.includes(hostype)) return 'text-green-600 font-bold';
+        if (purpleTypes.includes(hostype)) return 'text-purple-600 font-bold';
+        return 'text-gray-900 font-bold';
+    };
+
     return (
-        <div className="min-h-screen flex flex-col items-center p-8 bg-background">
+        <div className="min-h-screen flex flex-col items-center py-8 bg-background">
             <motion.div
                 initial="hidden"
                 animate="visible"
                 variants={containerVariants}
-                className="w-full max-w-5xl"
+                className="w-full max-w-7xl px-4 md:px-8"
             >
                 <motion.div variants={itemVariants} className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                     <div className="flex items-center gap-4">
-                        <Link href={`/?year=${year}`} className="w-10 h-10 flex items-center justify-center rounded-full bg-background shadow-neumorph text-blue-500 hover:scale-110 active:scale-95 transition-all duration-300">
+                        <Link href={`/?year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`} className="w-10 h-10 flex items-center justify-center rounded-full bg-background shadow-neumorph text-blue-500 hover:scale-110 active:scale-95 transition-all duration-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M19 12H5M12 19l-7-7 7-7" />
                             </svg>
                         </Link>
                         <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-wide drop-shadow-sm">
-                            รายชื่อหน่วยบริการ {districtName}
+                            {districtName}
                         </h1>
                     </div>
                 </motion.div>
@@ -202,8 +213,8 @@ export default function DistrictPage({ params }: PageProps) {
                                                     className="hover:bg-gray-50/50 transition-colors cursor-pointer group"
                                                     onClick={() => toggleExpand(hos.hospcode)}
                                                 >
-                                                    <td className="py-4 pl-4 text-gray-500">{hos.hospcode}</td>
-                                                    <td className="py-4 text-blue-600 font-medium">{hos.hospname}</td>
+                                                    <td className={`py-4 pl-4 ${getHostColor(hos.hostype_new)}`}>{hos.hospcode}</td>
+                                                    <td className={`py-4 ${getHostColor(hos.hostype_new)}`}>{hos.hospname}</td>
                                                     <td className="py-4 text-gray-600">{hos.tmb_name}</td>
                                                     <td className="py-4 text-right text-blue-600 font-medium">
                                                         {hos.population ? new Intl.NumberFormat('th-TH').format(hos.population) : '-'}
