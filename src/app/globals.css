@@ -1,28 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #e0e5ec;
-  --foreground: #4d5b7c;
-  --neumorph-light: #ffffff;
-  --neumorph-dark: #a3b1c6;
+  --background: #f9fafb;
+  --foreground: #1c252e;
+  --primary: #00a76f;
+  --primary-rgb: 0, 167, 111;
+  --secondary: #637381;
+  --card-bg: #ffffff;
+  --border-color: #f1f3f4;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-neumorph-light: var(--neumorph-light);
-  --color-neumorph-dark: var(--neumorph-dark);
-  
-  --shadow-neumorph: 9px 9px 16px var(--neumorph-dark), -9px -9px 16px var(--neumorph-light);
-  --shadow-neumorph-inset: inset 6px 6px 10px 0 var(--neumorph-dark), inset -6px -6px 10px 0 var(--neumorph-light);
-  
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+
+  --shadow-card: 0 0 2px 0 rgba(145, 158, 171, 0.2), 0 12px 24px -4px rgba(145, 158, 171, 0.12);
+  --shadow-header: 0 1px 2px 0 rgba(145, 158, 171, 0.16);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui;
+  --font-heading: var(--font-outfit), ui-sans-serif, system-ui;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), sans-serif;
+  min-height: 100vh;
 }
 
+.dasher-card {
+  background-color: var(--card-bg);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-card);
+  border: 0;
+  /* Remove border to match dashed style */
+  transition: transform 0.2s ease-in-out;
+}
+
+.dasher-card:hover {
+  transform: translateY(-4px);
+}

@@ -6,6 +6,8 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const ampurcode = searchParams.get('ampurcode');
+        const yearParam = searchParams.get('year') || '2568';
+        const year = parseInt(yearParam, 10);
 
         if (!ampurcode) {
             return NextResponse.json({ error: 'Missing ampurcode parameter' }, { status: 400 });
@@ -16,21 +18,52 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'Invalid ampurcode format' }, { status: 400 });
         }
 
-        // Query hospitals with Population and Household counts (Subqueries to avoid join duplication)
+        // Derive table names
+        const yy = String(year).slice(-2);
+        const popTable = `pop${yy}06`;
+        const houseTable = `house${year}`;
+
+        // Validate table names to prevent SQL injection
+        if (!/^[a-zA-Z0-9]+$/.test(popTable) || !/^[a-zA-Z0-9]+$/.test(houseTable)) {
+            return NextResponse.json({ error: 'Invalid year parameter' }, { status: 400 });
+        }
+
+        // Query hospitals with Population and Household counts
         const [rows] = await pool.query<RowDataPacket[]>(`
             SELECT 
                 h.hospcode, 
                 h.hospname, 
                 h.tmb_name,
-                (SELECT SUM(CAST(popall AS UNSIGNED)) FROM pop6806 WHERE hospcode = h.hospcode) as population,
-                (SELECT SUM(CAST(household AS UNSIGNED)) FROM house2568 WHERE hospcode = h.hospcode) as households
+                (SELECT SUM(CAST(popall AS UNSIGNED)) FROM ${popTable} WHERE hospcode = h.hospcode) as population,
+                ${year === 2567 ? 'NULL' : `(SELECT SUM(CAST(household AS UNSIGNED)) FROM ${houseTable} WHERE hospcode = h.hospcode)`} as households
             FROM chospital_plk h
             WHERE h.provcode = '65' AND h.amp_code = ?
             ORDER BY h.hospcode
         `, [ampurcode]);
 
+        // Get District-wide totals
+        const [popTotalRows] = await pool.query<RowDataPacket[]>(`
+            SELECT SUM(CAST(popall AS UNSIGNED)) as pop 
+            FROM ${popTable} 
+            WHERE ampurcode = ?
+        `, [ampurcode]);
+
+        let houseTotal = 0;
+        if (year !== 2567) {
+            const [houseTotalRows] = await pool.query<RowDataPacket[]>(`
+                SELECT SUM(CAST(household AS UNSIGNED)) as household 
+                FROM ${houseTable} 
+                WHERE ampurcode = ?
+            `, [ampurcode]);
+            houseTotal = Number(houseTotalRows[0]?.household || 0);
+        }
+
         return NextResponse.json({
             ampurcode,
+            districtTotal: {
+                population: Number(popTotalRows[0]?.pop || 0),
+                households: houseTotal
+            },
             hospitals: rows
         });
     } catch (error) {
