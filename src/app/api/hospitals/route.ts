@@ -6,40 +6,62 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const ampurcode = searchParams.get('ampurcode');
+        const tambon_code = searchParams.get('tambon_code');
         const yearParam = searchParams.get('year') || '2568';
         const affiliation = searchParams.get('affiliation'); // moph, local, other
         const year = parseInt(yearParam, 10);
 
-        if (!ampurcode) {
-            return NextResponse.json({ error: 'Missing ampurcode parameter' }, { status: 400 });
+        // Filter conditions
+        let whereConditions = ["h.provcode = '65'"];
+        const queryParams: any[] = [];
+
+        if (ampurcode) {
+            if (!/^\d{4}$/.test(ampurcode)) {
+                return NextResponse.json({ error: 'Invalid ampurcode format' }, { status: 400 });
+            }
+            whereConditions.push("h.amp_code = ?");
+            queryParams.push(ampurcode);
+        } else if (tambon_code) {
+            if (!/^\d{6}$/.test(tambon_code)) {
+                return NextResponse.json({ error: 'Invalid tambon_code format' }, { status: 400 });
+            }
+            whereConditions.push("h.tmb_code = ?");
+            queryParams.push(tambon_code);
+        } else {
+            return NextResponse.json({ error: 'Missing ampurcode or tambon_code parameter' }, { status: 400 });
         }
 
-        // Validate ampurcode (alphanumeric, 4 digits expected e.g. 6501)
-        if (!/^\d{4}$/.test(ampurcode)) {
-            return NextResponse.json({ error: 'Invalid ampurcode format' }, { status: 400 });
-        }
-
-        // Derive table names
+        // Validate table names to prevent SQL injection
         const yy = String(year).slice(-2);
         const popTable = `pop${yy}06`;
         const houseTable = `house${year}`;
+        const houseFieldName = year >= 2568 ? 'house' : 'household';
 
-        // Validate table names to prevent SQL injection
         if (!/^[a-zA-Z0-9]+$/.test(popTable) || !/^[a-zA-Z0-9]+$/.test(houseTable)) {
             return NextResponse.json({ error: 'Invalid year parameter' }, { status: 400 });
         }
 
         // Affiliation Filter Logic
-        let affiliationFilter = '';
         if (affiliation === 'moph') {
-            affiliationFilter = " AND h.hostype_new IN ('5', '7', '8', '11', '18')";
+            whereConditions.push("h.hostype_new IN ('5', '7', '8', '11', '18')");
         } else if (affiliation === 'local') {
-            affiliationFilter = " AND h.hostype_new = '21'";
+            whereConditions.push("h.hostype_new = '21'");
         } else if (affiliation === 'other') {
-            affiliationFilter = " AND h.hostype_new NOT IN ('5', '7', '8', '11', '18', '21')";
+            whereConditions.push("h.hostype_new NOT IN ('5', '7', '8', '11', '18', '21')");
         }
 
-        // Query hospitals with Population and Household counts
+        // Create totals variables
+        let totalWhere = "";
+        let totalParams: any[] = [];
+
+        if (ampurcode) {
+            totalWhere = "ampurcode = ?";
+            totalParams = [ampurcode];
+        } else if (tambon_code) {
+            totalWhere = "tamboncode = ?";
+            totalParams = [tambon_code];
+        }
+
         const [rows] = await pool.query<RowDataPacket[]>(`
             SELECT 
                 h.hospcode, 
@@ -47,26 +69,31 @@ export async function GET(request: Request) {
                 h.tmb_name,
                 h.hostype_new,
                 (SELECT SUM(CAST(popall AS UNSIGNED)) FROM ${popTable} WHERE hospcode = h.hospcode) as population,
-                ${year === 2567 ? 'NULL' : `(SELECT SUM(CAST(household AS UNSIGNED)) FROM ${houseTable} WHERE hospcode = h.hospcode)`} as households
-            FROM chospital_plk h
-            WHERE h.provcode = '65' AND h.amp_code = ? ${affiliationFilter}
+                (SELECT SUM(CAST(maleall AS UNSIGNED)) FROM ${popTable} WHERE hospcode = h.hospcode) as male,
+                (SELECT SUM(CAST(femaleall AS UNSIGNED)) FROM ${popTable} WHERE hospcode = h.hospcode) as female,
+                ${year === 2567 ? 'NULL' : `(SELECT SUM(CAST(${houseFieldName} AS UNSIGNED)) FROM ${houseTable} WHERE hospcode = h.hospcode)`} as house
+            FROM infohealth.hospital h
+            WHERE ${whereConditions.join(' AND ')}
             ORDER BY h.hospcode
-        `, [ampurcode]);
+        `, queryParams);
 
         // Get District-wide totals
         const [popTotalRows] = await pool.query<RowDataPacket[]>(`
-            SELECT SUM(CAST(popall AS UNSIGNED)) as pop 
+            SELECT 
+                SUM(CAST(popall AS UNSIGNED)) as pop,
+                SUM(CAST(maleall AS UNSIGNED)) as male,
+                SUM(CAST(femaleall AS UNSIGNED)) as female
             FROM ${popTable} 
-            WHERE ampurcode = ?
-        `, [ampurcode]);
+            WHERE ${totalWhere}
+        `, totalParams);
 
         let houseTotal = 0;
         if (year !== 2567) {
             const [houseTotalRows] = await pool.query<RowDataPacket[]>(`
-                SELECT SUM(CAST(household AS UNSIGNED)) as household 
+                SELECT SUM(CAST(${houseFieldName} AS UNSIGNED)) as household 
                 FROM ${houseTable} 
-                WHERE ampurcode = ?
-            `, [ampurcode]);
+                WHERE ${totalWhere}
+            `, totalParams);
             houseTotal = Number(houseTotalRows[0]?.household || 0);
         }
 
@@ -74,7 +101,9 @@ export async function GET(request: Request) {
             ampurcode,
             districtTotal: {
                 population: Number(popTotalRows[0]?.pop || 0),
-                households: houseTotal
+                male: Number(popTotalRows[0]?.male || 0),
+                female: Number(popTotalRows[0]?.female || 0),
+                house: houseTotal
             },
             hospitals: rows
         });

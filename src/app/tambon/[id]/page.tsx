@@ -40,9 +40,9 @@ const itemVariants: Variants = {
     }
 };
 
-export default function DistrictPage({ params }: PageProps) {
+export default function TambonPage({ params }: PageProps) {
     // Unwrap params using React.use()
-    const { id } = use(params);
+    const { id } = use(params); // id is tambon_code (6 digits)
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -51,43 +51,32 @@ export default function DistrictPage({ params }: PageProps) {
     const year = yearParam ? Number(yearParam) : 2568;
     const affiliation = searchParams.get('affiliation') || '';
 
-    const tambonId = searchParams.get('tambon') || '';
-
     const [hospitals, setHospitals] = useState<Hospital[]>([]);
-    const [districtTotal, setDistrictTotal] = useState({ population: 0, house: 0 });
+    const [tambonTotal, setTambonTotal] = useState({ population: 0, households: 0 });
     const [loading, setLoading] = useState(true);
     const [villages, setVillages] = useState<Record<string, any[]>>({});
     const [expandedHosp, setExpandedHosp] = useState<string | null>(null);
+    const [tambonName, setTambonName] = useState<string>('');
 
-    // Map of Ampur Codes to Names
-    const ampurNames: Record<string, string> = {
-        '6501': 'อำเภอเมืองพิษณุโลก',
-        '6502': 'อำเภอนครไทย',
-        '6503': 'อำเภอชาติตระการ',
-        '6504': 'อำเภอบางระกำ',
-        '6505': 'อำเภอบางกระทุ่ม',
-        '6506': 'อำเภอพรหมพิราม',
-        '6507': 'อำเภอวัดโบสถ์',
-        '6508': 'อำเภอวังทอง',
-        '6509': 'อำเภอเนินมะปราง',
-    };
-
-    const districtName = ampurNames[id] || `อำเภอ รหัส ${id}`;
+    // Extract District ID from Tambon ID
+    const districtId = id.substring(0, 4);
 
     useEffect(() => {
         async function fetchData() {
             setLoading(true);
             try {
-                const filterParam = tambonId ? `tambon_code=${tambonId}` : `ampurcode=${id}`;
-
-                // Fetch hospitals & totals
-                const hospRes = await fetch(`/api/hospitals?${filterParam}&year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`);
+                // Fetch hospitals & totals by tambon_code
+                const hospRes = await fetch(`/api/hospitals?tambon_code=${id}&year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`);
                 const hospData = await hospRes.json();
                 setHospitals(hospData.hospitals || []);
-                setDistrictTotal(hospData.districtTotal || { population: 0, house: 0 });
+                setTambonTotal(hospData.districtTotal || { population: 0, households: 0 });
 
-                // Fetch villages
-                const villageRes = await fetch(`/api/villages?${filterParam}&year=${year}`);
+                if (hospData.hospitals && hospData.hospitals.length > 0) {
+                    setTambonName(hospData.hospitals[0].tmb_name);
+                }
+
+                // Fetch villages by tambon_code
+                const villageRes = await fetch(`/api/villages?tambon_code=${id}&year=${year}`);
                 const villageData = await villageRes.json();
 
                 // Group villages by hospcode
@@ -107,8 +96,10 @@ export default function DistrictPage({ params }: PageProps) {
                 setLoading(false);
             }
         }
-        fetchData();
-    }, [id, tambonId, year, affiliation]);
+        if (id && id.length === 6) {
+            fetchData();
+        }
+    }, [id, year, affiliation]);
 
     const toggleExpand = (hospcode: string) => {
         setExpandedHosp(expandedHosp === hospcode ? null : hospcode);
@@ -133,14 +124,17 @@ export default function DistrictPage({ params }: PageProps) {
             >
                 <motion.div variants={itemVariants} className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                     <div className="flex items-center gap-4">
-                        <Link href={`/?year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`} className="w-10 h-10 flex items-center justify-center rounded-full bg-background shadow-neumorph text-blue-500 hover:scale-110 active:scale-95 transition-all duration-300">
+                        <Link href={`/district/${districtId}?year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`} className="w-10 h-10 flex items-center justify-center rounded-full bg-background shadow-neumorph text-blue-500 hover:scale-110 active:scale-95 transition-all duration-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M19 12H5M12 19l-7-7 7-7" />
                             </svg>
                         </Link>
-                        <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-wide drop-shadow-sm">
-                            {districtName}
-                        </h1>
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-wide drop-shadow-sm">
+                                ตำบล{tambonName || id}
+                            </h1>
+                            <p className="text-sm text-gray-500 font-medium">รหัสตำบล: {id}</p>
+                        </div>
                     </div>
                 </motion.div>
 
@@ -282,14 +276,14 @@ export default function DistrictPage({ params }: PageProps) {
                                             </React.Fragment>
                                         ))}
                                         <tr className="border-t font-bold text-gray-800">
-                                            <td className="py-4 pl-4">รวม</td>
+                                            <td className="py-4 pl-4">รวม (เฉพาะหน่วยบริการที่พบ)</td>
                                             <td colSpan={2}></td>
                                             <td className="py-4 text-right">
-                                                {new Intl.NumberFormat('th-TH').format(districtTotal.population)}
+                                                {new Intl.NumberFormat('th-TH').format(tambonTotal.population)}
                                             </td>
                                             {year !== 2567 && (
                                                 <td className="py-4 pr-4 text-right">
-                                                    {new Intl.NumberFormat('th-TH').format(districtTotal.house)}
+                                                    {new Intl.NumberFormat('th-TH').format(tambonTotal.households)}
                                                 </td>
                                             )}
                                         </tr>

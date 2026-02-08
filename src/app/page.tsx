@@ -9,13 +9,13 @@ interface District {
   ampurcode: string;
   ampurname: string;
   population: number;
-  households: number;
+  house: number;
 }
 
 interface Stats {
   year: number;
   midYearPopulation: number;
-  households: number;
+  house: number;
   totalVillages: number;
   totalHospitals: number;
   districts: District[];
@@ -44,6 +44,7 @@ export default function Home() {
   const year = yearParam ? Number(yearParam) : 2568;
 
   const affiliation = searchParams.get('affiliation') || '';
+  const districtId = searchParams.get('id');
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -51,7 +52,8 @@ export default function Home() {
     async function fetchStats() {
       setLoading(true);
       try {
-        const res = await fetch(`/api/stats?year=${year}&affiliation=${affiliation}`);
+        const idParam = districtId ? `&id=${districtId}` : '';
+        const res = await fetch(`/api/stats?year=${year}&affiliation=${affiliation}${idParam}`);
         const data = await res.json();
         setStats(data);
       } catch (error) {
@@ -85,51 +87,75 @@ export default function Home() {
           animate="visible"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8">
+          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#E8EAF6] to-[#C5CAE9] border-none shadow-sm">
             <div className="flex justify-between items-center">
-              <span className="font-bold text-gray-500 uppercase text-xs tracking-widest">ประชากร</span>
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-xl">👥</div>
+              <span className="font-bold text-indigo-800 uppercase text-sm tracking-widest">ประชากร</span>
+              <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-indigo-400 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
             </div>
             <div className="flex flex-col gap-2">
-              {loading ? <div className="h-10 w-24 bg-gray-100 animate-pulse rounded-lg" /> : <p className="text-3xl font-heading font-black text-gray-800">{stats ? formatNumber(stats.midYearPopulation) : '-'}</p>}
-              <p className="text-xs font-bold"><span className="text-primary">+2.4%</span> <span className="text-gray-400">เพิ่มขึ้นจากปีที่แล้ว</span></p>
+              {loading ? <div className="h-10 w-24 bg-white/40 animate-pulse rounded-lg" /> : <p className="text-3xl font-heading font-black text-indigo-900">{stats ? formatNumber(stats.midYearPopulation) : '-'}</p>}
+              <p className="text-sm font-bold text-indigo-500/70 uppercase tracking-wider">จำนวนประชากรทั้งหมดในจังหวัด</p>
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8">
+          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#F3E5F5] to-[#E1BEE7] border-none shadow-sm">
             <div className="flex justify-between items-center">
-              <span className="font-bold text-gray-500 uppercase text-xs tracking-widest">หลังคาเรือน</span>
-              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 text-xl">🏡</div>
+              <span className="font-bold text-purple-800 uppercase text-sm tracking-widest">หลังคาเรือน</span>
+              <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-purple-500 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-home">
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+              </div>
             </div>
             <div className="flex flex-col gap-2">
-              {loading ? <div className="h-10 w-24 bg-gray-100 animate-pulse rounded-lg" /> : <p className="text-3xl font-heading font-black text-gray-800">{year === 2567 ? '-' : (stats ? formatNumber(stats.households) : '-')}</p>}
-              <p className="text-xs font-bold"><span className="text-blue-500">{year === 2567 ? '-' : '+1.2%'}</span> <span className="text-gray-400">อัตราการเติบโตคงที่</span></p>
+              {loading ? <div className="h-10 w-24 bg-white/40 animate-pulse rounded-lg" /> : <p className="text-3xl font-heading font-black text-purple-900">{year === 2567 ? '-' : (stats ? formatNumber(stats.house) : '-')}</p>}
+              <p className="text-sm font-bold text-purple-500/70 uppercase tracking-wider">จำนวนที่อยู่อาศัยทั้งหมด</p>
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8">
+          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#FFF3E0] to-[#FFE0B2] border-none shadow-sm">
             <div className="flex justify-between items-center">
-              <span className="font-bold text-gray-500 uppercase text-xs tracking-widest">หมู่บ้าน</span>
-              <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500 text-xl">📍</div>
+              <span className="font-bold text-orange-800 uppercase text-sm tracking-widest">หมู่บ้าน</span>
+              <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-orange-500 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map-pin">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </div>
             </div>
             <div className="flex flex-col gap-2">
-              <p className="text-3xl font-heading font-black text-gray-800">
+              <p className="text-3xl font-heading font-black text-orange-900">
                 {loading ? "..." : formatNumber(stats?.totalVillages || 0)}
               </p>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-tighter">จำนวนพื้นที่ดำเนินการ</p>
+              <p className="text-sm font-bold text-orange-500/70 uppercase tracking-wider">จำนวนพื้นที่ดำเนินการทั้งหมด</p>
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8">
+          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#E0F2F1] to-[#B2DFDB] border-none shadow-sm">
             <div className="flex justify-between items-center">
-              <span className="font-bold text-gray-500 uppercase text-xs tracking-widest">จำนวนหน่วยบริการ</span>
-              <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-500 text-xl">🏥</div>
+              <span className="font-bold text-teal-800 uppercase text-sm tracking-widest">หน่วยบริการ</span>
+              <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-teal-500 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-hospital">
+                  <path d="M12 6v4" />
+                  <path d="M14 14h-4" />
+                  <path d="M14 18h-4" />
+                  <path d="M14 8h-4" />
+                  <path d="M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2" />
+                  <path d="M18 22V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18" />
+                </svg>
+              </div>
             </div>
             <div className="flex flex-col gap-2">
-              <p className="text-3xl font-heading font-black text-gray-800">
-                {loading ? "..." : formatNumber(stats?.totalHospitals || 0)}
-              </p>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">หน่วยบริการในจังหวัด</p>
+              {loading ? <div className="h-10 w-24 bg-white/40 animate-pulse rounded-lg" /> : <p className="text-3xl font-heading font-black text-teal-900">{stats ? formatNumber(stats.totalHospitals || 0) : '-'}</p>}
+              <p className="text-sm font-bold text-teal-500/70 uppercase tracking-wider">หน่วยบริการที่เปิดให้บริการในจังหวัด</p>
             </div>
           </motion.div>
         </motion.div>
@@ -146,55 +172,62 @@ export default function Home() {
               Array.from({ length: 9 }).map((_, i) => (
                 <div key={i} className="dasher-card p-6 h-48 animate-pulse bg-gray-50/50" />
               ))
-            ) : stats?.districts?.map((district) => (
-              <Link href={`/district/${district.ampurcode}?year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`} key={district.ampurcode}>
+            ) : stats?.districts?.map((district, index) => {
+              const colors = [
+                { bg: 'bg-gradient-to-br from-[#E3F2FD] to-[#E1F5FE]', text: 'text-blue-800', subText: 'text-blue-500/70', accent: 'bg-blue-500/10', icon: 'text-blue-400', statBg: 'bg-white/60' },
+                { bg: 'bg-gradient-to-br from-[#FCE4EC] to-[#F8BBD0]', text: 'text-pink-800', subText: 'text-pink-500/70', accent: 'bg-pink-500/10', icon: 'text-pink-400', statBg: 'bg-white/60' },
+                { bg: 'bg-gradient-to-br from-[#E0F2F1] to-[#B2DFDB]', text: 'text-teal-800', subText: 'text-teal-500/70', accent: 'bg-teal-500/10', icon: 'text-teal-400', statBg: 'bg-white/60' },
+                { bg: 'bg-gradient-to-br from-[#F3E5F5] to-[#E1BEE7]', text: 'text-purple-800', subText: 'text-purple-500/70', accent: 'bg-purple-500/10', icon: 'text-purple-400', statBg: 'bg-white/60' },
+                { bg: 'bg-gradient-to-br from-[#FFF3E0] to-[#FFE0B2]', text: 'text-orange-800', subText: 'text-orange-500/70', accent: 'bg-orange-500/10', icon: 'text-orange-400', statBg: 'bg-white/60' },
+                { bg: 'bg-gradient-to-br from-[#F1F8E9] to-[#DCEDC8]', text: 'text-green-800', subText: 'text-green-500/70', accent: 'bg-green-500/10', icon: 'text-green-400', statBg: 'bg-white/60' },
+                { bg: 'bg-gradient-to-br from-[#E8EAF6] to-[#C5CAE9]', text: 'text-indigo-800', subText: 'text-indigo-500/70', accent: 'bg-indigo-500/10', icon: 'text-indigo-400', statBg: 'bg-white/60' },
+                { bg: 'bg-gradient-to-br from-[#FFFDE7] to-[#FFF9C4]', text: 'text-yellow-800', subText: 'text-yellow-600/70', accent: 'bg-yellow-500/10', icon: 'text-yellow-500', statBg: 'bg-white/60' },
+                { bg: 'bg-gradient-to-br from-[#EFEBE9] to-[#D7CCC8]', text: 'text-brown-800', subText: 'text-brown-500/70', accent: 'bg-brown-500/10', icon: 'text-brown-400', statBg: 'bg-white/60' },
+              ];
+              const color = colors[index % colors.length];
+
+              return (
                 <motion.div
-                  whileHover={{ y: -5, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="dasher-card p-6 h-full flex flex-col justify-between group cursor-pointer border-transparent hover:border-primary/20 transition-all duration-300"
+                  key={district.ampurcode}
+                  className={`dasher-card p-7 h-full flex flex-col justify-between group border-none transition-all duration-300 ${color.bg}`}
                 >
-                  <div className="flex justify-between items-start mb-4">
+                  <div className="flex justify-between items-start mb-6">
                     <div className="flex flex-col">
-                      <h4 className="text-xl font-black text-gray-800 group-hover:text-primary transition-colors">{district.ampurname}</h4>
-                      <span className="text-[10px] font-black text-gray-400 tracking-wider mt-0.5">รหัสอำเภอ: {district.ampurcode}</span>
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-300">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M7 17l9.2-9.2M17 17V7H7" />
-                      </svg>
+                      <h4 className={`text-lg font-black ${color.text} tracking-tight`}>{district.ampurname}</h4>
+                      <span className={`text-[10px] font-black ${color.subText} tracking-wider mt-1 uppercase`}>รหัสอำเภอ: {district.ampurcode}</span>
                     </div>
                   </div>
 
                   <div className={`grid ${year === 2567 ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
-                    <div className="flex flex-col gap-1 p-3 rounded-2xl bg-blue-50/50 group-hover:bg-blue-50 transition-colors">
+                    <div className={`flex flex-col gap-1.5 p-3 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300`}>
                       <div className="flex items-center gap-1.5 mb-1">
-                        <span className="text-blue-500">👥</span>
-                        <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">ประชากร</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500/70">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                          <circle cx="9" cy="7" r="4" />
+                          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                        <span className={`text-[11px] font-black ${color.subText} uppercase tracking-widest`}>ประชากร</span>
                       </div>
-                      <p className="text-lg font-black text-blue-600">{formatNumber(district.population)}</p>
+                      <p className={`text-lg font-black ${color.text}`}>{formatNumber(district.population)}</p>
                     </div>
 
                     {year !== 2567 && (
-                      <div className="flex flex-col gap-1 p-3 rounded-2xl bg-purple-50/50 group-hover:bg-purple-50 transition-colors">
+                      <div className={`flex flex-col gap-1.5 p-3 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300`}>
                         <div className="flex items-center gap-1.5 mb-1">
-                          <span className="text-purple-500">🏡</span>
-                          <span className="text-[9px] font-black text-purple-400 uppercase tracking-widest">หลังคาเรือน</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500/70">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                          </svg>
+                          <span className={`text-[11px] font-black ${color.subText} uppercase tracking-widest`}>หลังคาเรือน</span>
                         </div>
-                        <p className="text-lg font-black text-purple-600">{formatNumber(district.households)}</p>
+                        <p className={`text-lg font-black ${color.text}`}>{formatNumber(district.house)}</p>
                       </div>
                     )}
                   </div>
-
-                  <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">สถานะ: ตรวจสอบแล้ว</span>
-                    <div className="flex -space-x-2">
-                      <div className="w-5 h-5 rounded-full border-2 border-white bg-green-400"></div>
-                      <div className="w-5 h-5 rounded-full border-2 border-white bg-blue-400"></div>
-                    </div>
-                  </div>
                 </motion.div>
-              </Link>
-            ))}
+              );
+            })}
           </div>
         </motion.div>
       </motion.div>

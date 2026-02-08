@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
 
     // Protect all /api routes EXCEPT /api/login and public data APIs
-    const publicPaths = ['/api/login', '/api/stats', '/api/hospitals', '/api/villages'];
+    const publicPaths = ['/api/login', '/api/stats', '/api/hospitals', '/api/villages', '/api/districts', '/api/tambons'];
 
     if (path.startsWith('/api') && !publicPaths.some(p => path.startsWith(p))) {
 
