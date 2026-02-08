@@ -16,6 +16,7 @@ interface Stats {
   year: number;
   midYearPopulation: number;
   house: number;
+  totalTambons: number;
   totalVillages: number;
   totalHospitals: number;
   districts: District[];
@@ -85,8 +86,9 @@ export default function Home() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6"
         >
+          {/* 1. ประชากร */}
           <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#E8EAF6] to-[#C5CAE9] border-none shadow-sm">
             <div className="flex justify-between items-center">
               <span className="font-bold text-indigo-800 uppercase text-sm tracking-widest">ประชากร</span>
@@ -105,40 +107,23 @@ export default function Home() {
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#F3E5F5] to-[#E1BEE7] border-none shadow-sm">
+          {/* 2. ตำบล */}
+          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#F5F5F5] to-[#EEEEEE] border-none shadow-sm">
             <div className="flex justify-between items-center">
-              <span className="font-bold text-purple-800 uppercase text-sm tracking-widest">หลังคาเรือน</span>
-              <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-purple-500 shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-home">
-                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                  <polyline points="9 22 9 12 15 12 15 22" />
+              <span className="font-bold text-slate-800 uppercase text-sm tracking-widest">ตำบล</span>
+              <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-slate-500 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-navigation">
+                  <polygon points="3 11 22 2 13 21 11 13 3 11" />
                 </svg>
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              {loading ? <div className="h-10 w-24 bg-white/40 animate-pulse rounded-lg" /> : <p className="text-3xl font-heading font-black text-purple-900">{year === 2567 ? '-' : (stats ? formatNumber(stats.house) : '-')}</p>}
-              <p className="text-sm font-bold text-purple-500/70 uppercase tracking-wider">จำนวนที่อยู่อาศัยทั้งหมด</p>
+              {loading ? <div className="h-10 w-24 bg-white/40 animate-pulse rounded-lg" /> : <p className="text-3xl font-heading font-black text-slate-900">{stats ? formatNumber(stats.totalTambons || 0) : '-'}</p>}
+              <p className="text-sm font-bold text-slate-500/70 uppercase tracking-wider">จำนวนตำบลทั้งหมดในจังหวัด</p>
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#FFF3E0] to-[#FFE0B2] border-none shadow-sm">
-            <div className="flex justify-between items-center">
-              <span className="font-bold text-orange-800 uppercase text-sm tracking-widest">หมู่บ้าน</span>
-              <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-orange-500 shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map-pin">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="text-3xl font-heading font-black text-orange-900">
-                {loading ? "..." : formatNumber(stats?.totalVillages || 0)}
-              </p>
-              <p className="text-sm font-bold text-orange-500/70 uppercase tracking-wider">จำนวนพื้นที่ดำเนินการทั้งหมด</p>
-            </div>
-          </motion.div>
-
+          {/* 3. หน่วยบริการ */}
           <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#E0F2F1] to-[#B2DFDB] border-none shadow-sm">
             <div className="flex justify-between items-center">
               <span className="font-bold text-teal-800 uppercase text-sm tracking-widest">หน่วยบริการ</span>
@@ -156,6 +141,42 @@ export default function Home() {
             <div className="flex flex-col gap-2">
               {loading ? <div className="h-10 w-24 bg-white/40 animate-pulse rounded-lg" /> : <p className="text-3xl font-heading font-black text-teal-900">{stats ? formatNumber(stats.totalHospitals || 0) : '-'}</p>}
               <p className="text-sm font-bold text-teal-500/70 uppercase tracking-wider">หน่วยบริการที่เปิดให้บริการในจังหวัด</p>
+            </div>
+          </motion.div>
+
+          {/* 4. หมู่บ้าน */}
+          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#FFF3E0] to-[#FFE0B2] border-none shadow-sm">
+            <div className="flex justify-between items-center">
+              <span className="font-bold text-orange-800 uppercase text-sm tracking-widest">หมู่บ้าน</span>
+              <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-orange-500 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-flag">
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                  <line x1="4" x2="4" y1="22" y2="15" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="text-3xl font-heading font-black text-orange-900">
+                {loading ? "..." : formatNumber(stats?.totalVillages || 0)}
+              </p>
+              <p className="text-sm font-bold text-orange-500/70 uppercase tracking-wider">จำนวนพื้นที่ดำเนินการทั้งหมด</p>
+            </div>
+          </motion.div>
+
+          {/* 5. หลังคาเรือน */}
+          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#F3E5F5] to-[#E1BEE7] border-none shadow-sm">
+            <div className="flex justify-between items-center">
+              <span className="font-bold text-purple-800 uppercase text-sm tracking-widest">หลังคาเรือน</span>
+              <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-purple-500 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map-pin">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              {loading ? <div className="h-10 w-24 bg-white/40 animate-pulse rounded-lg" /> : <p className="text-3xl font-heading font-black text-purple-900">{year === 2567 ? '-' : (stats ? formatNumber(stats.house) : '-')}</p>}
+              <p className="text-sm font-bold text-purple-500/70 uppercase tracking-wider">จำนวนที่อยู่อาศัยทั้งหมด</p>
             </div>
           </motion.div>
         </motion.div>
@@ -216,8 +237,8 @@ export default function Home() {
                       <div className={`flex flex-col gap-1.5 p-3 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300`}>
                         <div className="flex items-center gap-1.5 mb-1">
                           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500/70">
-                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                            <polyline points="9 22 9 12 15 12 15 22" />
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                            <circle cx="12" cy="10" r="3" />
                           </svg>
                           <span className={`text-[11px] font-black ${color.subText} uppercase tracking-widest`}>หลังคาเรือน</span>
                         </div>

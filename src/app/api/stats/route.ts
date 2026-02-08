@@ -62,6 +62,7 @@ export async function GET(request: Request) {
                 SUM(CAST(p.popall AS UNSIGNED)) as pop,
                 SUM(CAST(p.maleall AS UNSIGNED)) as male,
                 SUM(CAST(p.femaleall AS UNSIGNED)) as female,
+                COUNT(DISTINCT p.tamboncode) as tambons,
                 COUNT(DISTINCT p.villagecode) as villages,
                 COUNT(DISTINCT p.hospcode) as hospitals
             FROM ${popTable} p
@@ -72,6 +73,7 @@ export async function GET(request: Request) {
         male = statsRows[0]?.male || 0;
         female = statsRows[0]?.female || 0;
         totalVillages = statsRows[0]?.villages || 0;
+        const totalTambons = statsRows[0]?.tambons || 0;
         totalHospitals = statsRows[0]?.hospitals || 0;
 
         // Get District Population Breakdown
@@ -144,6 +146,7 @@ export async function GET(request: Request) {
             male: Number(male),
             female: Number(female),
             house: Number(house),
+            totalTambons: Number(totalTambons),
             totalVillages: Number(totalVillages),
             totalHospitals: Number(totalHospitals),
             districts: districts

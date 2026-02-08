@@ -115,9 +115,10 @@ export default function PopulationPage() {
                         <div className="flex justify-between items-center">
                             <span className="font-bold text-blue-800 uppercase text-sm tracking-widest">ชาย</span>
                             <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-blue-500 shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user">
-                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M16 3h5v5" />
+                                    <path d="m21 3-7 7" />
+                                    <circle cx="9" cy="15" r="6" />
                                 </svg>
                             </div>
                         </div>
@@ -131,9 +132,10 @@ export default function PopulationPage() {
                         <div className="flex justify-between items-center">
                             <span className="font-bold text-pink-800 uppercase text-sm tracking-widest">หญิง</span>
                             <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-pink-500 shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user">
-                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="9" r="6" />
+                                    <path d="M12 15v7" />
+                                    <path d="M9 19h6" />
                                 </svg>
                             </div>
                         </div>
@@ -202,9 +204,10 @@ export default function PopulationPage() {
                                                 <h4 className={`text-lg font-black ${color.text} tracking-tight group-hover:drop-shadow-sm`}>{district.ampurname}</h4>
                                                 <span className={`text-[10px] font-black ${color.subText} tracking-wider mt-1 uppercase`}>รหัสอำเภอ: {district.ampurcode}</span>
                                             </div>
-                                            <div className={`w-11 h-11 rounded-2xl ${color.accent} flex items-center justify-center ${color.icon} group-hover:scale-110 transition-transform duration-500 shadow-sm`}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                    <path d="M7 17l9.2-9.2M17 17V7H7" />
+                                            <div className={`w-11 h-11 rounded-2xl bg-white/40 flex items-center justify-center ${color.icon} group-hover:scale-110 group-hover:bg-white/60 transition-all duration-500 shadow-sm border border-white/20`}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 256 256">
+                                                    <path d="M128,32a96,96,0,1,0,96,96A96,96,0,0,0,128,32Zm0,176a80,80,0,1,1,80-80A80,80,0,0,1,128,208Z" fill="currentColor" opacity="0.2"></path>
+                                                    <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm45.66-93.66a8,8,0,0,1,0,11.32l-32,32a8,8,0,0,1-11.32-11.32L148.69,136H88a8,8,0,0,1,0-16h60.69l-18.35-18.34a8,8,0,0,1,11.32-11.32Z" fill="currentColor"></path>
                                                 </svg>
                                             </div>
                                         </div>
@@ -216,12 +219,26 @@ export default function PopulationPage() {
                                             </div>
 
                                             <div className={`flex flex-col gap-1.5 p-3 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300 group-hover:shadow-md text-center`}>
-                                                <span className={`text-[11px] font-black ${color.subText} uppercase tracking-tighter`}>ชาย</span>
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
+                                                        <path d="M16 3h5v5" />
+                                                        <path d="m21 3-7 7" />
+                                                        <circle cx="9" cy="15" r="6" />
+                                                    </svg>
+                                                    <span className={`text-[11px] font-black ${color.subText} uppercase tracking-tighter`}>ชาย</span>
+                                                </div>
                                                 <p className={`text-base font-black ${color.text}`}>{formatNumber(district.male)}</p>
                                             </div>
 
                                             <div className={`flex flex-col gap-1.5 p-3 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300 group-hover:shadow-md text-center`}>
-                                                <span className={`text-[11px] font-black ${color.subText} uppercase tracking-tighter`}>หญิง</span>
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-pink-500">
+                                                        <circle cx="12" cy="9" r="6" />
+                                                        <path d="M12 15v7" />
+                                                        <path d="M9 19h6" />
+                                                    </svg>
+                                                    <span className={`text-[11px] font-black ${color.subText} uppercase tracking-tighter`}>หญิง</span>
+                                                </div>
                                                 <p className={`text-base font-black ${color.text}`}>{formatNumber(district.female)}</p>
                                             </div>
                                         </div>

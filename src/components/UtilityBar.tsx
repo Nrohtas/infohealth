@@ -70,17 +70,44 @@ export default function UtilityBar() {
     };
 
     const tabs = [
-        { id: 'home', label: 'หน้าหลัก', icon: '🏠', color: 'blue' },
+        {
+            id: 'home',
+            label: 'หน้าหลัก',
+            icon: (props: any) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+            ),
+            color: 'blue'
+        },
         {
             id: 'population',
             label: 'ประชากร',
-            icon: '👥',
+            icon: (props: any) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            ),
             color: 'teal',
             dropdown: [
                 { label: 'ประชากรกลางปี', href: '/population' }
             ]
         },
-        { id: 'house', label: 'บ้าน', icon: '🏡', color: 'purple' },
+        {
+            id: 'house',
+            label: 'หลังคาเรือน',
+            icon: (props: any) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                </svg>
+            ),
+            color: 'purple'
+        },
     ];
 
     return (
@@ -94,8 +121,14 @@ export default function UtilityBar() {
                             {tabs.map((tab: any) => (
                                 <div key={tab.id} className="relative group">
                                     <button
-                                        onClick={() => handleTabChange(tab.id as any)}
-                                        className={`relative z-10 flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 focus:outline-none`}
+                                        onClick={(e) => {
+                                            if (tab.dropdown) {
+                                                e.preventDefault();
+                                            } else {
+                                                handleTabChange(tab.id as any);
+                                            }
+                                        }}
+                                        className={`relative z-10 flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 focus:outline-none ${tab.dropdown ? 'cursor-default' : ''}`}
                                     >
                                         {activeTab === tab.id && (
                                             <motion.div
@@ -104,8 +137,8 @@ export default function UtilityBar() {
                                                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                             />
                                         )}
-                                        <span className={`relative z-20 text-lg transition-transform duration-300 ${activeTab === tab.id ? 'scale-110' : 'group-hover:scale-110 grayscale-[0.5] group-hover:grayscale-0'}`}>
-                                            {tab.icon}
+                                        <span className={`relative z-20 transition-transform duration-300 ${activeTab === tab.id ? 'scale-110 text-indigo-600' : 'group-hover:scale-110 text-slate-400 group-hover:text-indigo-400'}`}>
+                                            {tab.icon({ className: "w-5 h-5" })}
                                         </span>
                                         <span className={`relative z-20 font-black text-sm transition-colors duration-300 ${activeTab === tab.id ? 'text-indigo-950' : 'text-indigo-600/60 group-hover:text-indigo-950'}`}>
                                             {tab.label}
@@ -154,7 +187,20 @@ export default function UtilityBar() {
                                 >
                                     {/* Common Year Filter */}
                                     <div className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-blue-100 group">
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover:text-blue-400 transition-colors">ปี</span>
+                                        <div className="flex items-center gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-600/60 group-hover:text-indigo-600 transition-all duration-300 group-hover:scale-110">
+                                                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                                                <line x1="16" x2="16" y1="2" y2="6" />
+                                                <line x1="8" x2="8" y1="2" y2="6" />
+                                                <line x1="3" x2="21" y1="10" y2="10" />
+                                                <path d="M8 14h.01" />
+                                                <path d="M12 14h.01" />
+                                                <path d="M16 14h.01" />
+                                                <path d="M8 18h.01" />
+                                                <path d="M12 18h.01" />
+                                                <path d="M16 18h.01" />
+                                            </svg>
+                                        </div>
                                         <div className="relative">
                                             <select
                                                 value={year}
@@ -170,80 +216,92 @@ export default function UtilityBar() {
                                         </div>
                                     </div>
 
-                                    {activeTab === 'population' && (
+                                    {(activeTab === 'population') && (
                                         <>
                                             {/* District Pill */}
                                             <div className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-blue-100 group">
-                                                <div className="relative">
-                                                    <select
-                                                        value={districtId}
-                                                        onChange={(e) => {
-                                                            const val = e.target.value;
-                                                            const params = new URLSearchParams(searchParams.toString());
-                                                            params.delete('tambon');
+                                                <div className="flex items-center gap-1.5 min-w-[120px]">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-600/60 group-hover:text-indigo-600 transition-colors">
+                                                        <path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z" />
+                                                        <path d="m9 5.5v12.5" />
+                                                        <path d="m15 6v12.5" />
+                                                    </svg>
+                                                    <div className="relative flex-1">
+                                                        <select
+                                                            value={districtId}
+                                                            onChange={(e) => {
+                                                                const val = e.target.value;
+                                                                const params = new URLSearchParams(searchParams.toString());
+                                                                params.delete('tambon');
 
-                                                            if (activeTab === 'population') {
-                                                                if (val) router.push(`/population/${val}?${params.toString()}`);
-                                                                else router.push(`/population?${params.toString()}`);
-                                                            } else {
-                                                                // On Home tab
-                                                                if (val) {
-                                                                    router.push(`/district/${val}?${params.toString()}`);
+                                                                if (activeTab === 'population') {
+                                                                    if (val) router.push(`/population/${val}?${params.toString()}`);
+                                                                    else router.push(`/population?${params.toString()}`);
                                                                 } else {
-                                                                    router.push(`/?${params.toString()}`);
+                                                                    // On Home tab
+                                                                    if (val) {
+                                                                        router.push(`/district/${val}?${params.toString()}`);
+                                                                    } else {
+                                                                        router.push(`/?${params.toString()}`);
+                                                                    }
                                                                 }
-                                                            }
-                                                        }}
-                                                        className="appearance-none bg-transparent text-indigo-900 font-black text-base outline-none cursor-pointer pr-4 z-10 relative min-w-[110px]"
-                                                    >
-                                                        <option value="">ทุกอำเภอ</option>
-                                                        {districts.map((d) => (
-                                                            <option key={d.code} value={d.code}>{d.name}</option>
-                                                        ))}
-                                                    </select>
-                                                    <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-[#00BFA5]/60">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 12 0l-6 6z" /></svg>
+                                                            }}
+                                                            className="appearance-none bg-transparent text-indigo-900 font-black text-sm outline-none cursor-pointer pr-4 z-10 relative w-full"
+                                                        >
+                                                            <option value="">ทุกอำเภอ</option>
+                                                            {districts.map((d) => (
+                                                                <option key={d.code} value={d.code}>{d.name}</option>
+                                                            ))}
+                                                        </select>
+                                                        <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-[#00BFA5]/60">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 12 0l-6 6z" /></svg>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </>
                                     )}
 
-                                    {activeTab === 'population' && (
+                                    {(activeTab === 'population') && (
                                         <>
                                             {/* Tambon Pill */}
                                             <div className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-blue-100 group">
-                                                <div className="relative">
-                                                    <select
-                                                        disabled={!districtId}
-                                                        value={tambonId}
-                                                        onChange={(e) => {
-                                                            const params = new URLSearchParams(searchParams.toString());
-                                                            if (e.target.value) params.set('tambon', e.target.value);
-                                                            else params.delete('tambon');
+                                                <div className="flex items-center gap-1.5 min-w-[120px]">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`${districtId ? 'text-indigo-600/60 group-hover:text-indigo-600' : 'text-gray-300'} transition-colors`}>
+                                                        <polygon points="3 11 22 2 13 21 11 13 3 11" />
+                                                    </svg>
+                                                    <div className="relative flex-1">
+                                                        <select
+                                                            disabled={!districtId}
+                                                            value={tambonId}
+                                                            onChange={(e) => {
+                                                                const params = new URLSearchParams(searchParams.toString());
+                                                                if (e.target.value) params.set('tambon', e.target.value);
+                                                                else params.delete('tambon');
 
-                                                            if (pathname.startsWith('/population/')) {
-                                                                router.push(`${pathname}?${params.toString()}`);
-                                                            } else {
-                                                                router.push(`/population?${params.toString()}`);
-                                                            }
-                                                        }}
-                                                        className={`appearance-none bg-transparent ${districtId ? 'text-indigo-900' : 'text-indigo-300'} font-black text-base outline-none cursor-pointer pr-4 z-10 relative min-w-[110px] disabled:cursor-not-allowed`}
-                                                    >
-                                                        <option value="">{districtId ? 'ทุกตำบล' : 'เลือกอำเภอ'}</option>
-                                                        {tambons.map((t) => (
-                                                            <option key={t.code} value={t.code}>{t.name}</option>
-                                                        ))}
-                                                    </select>
-                                                    <div className={`absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none ${districtId ? 'text-[#00BFA5]/60' : 'text-gray-300'}`}>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 12 0l-6 6z" /></svg>
+                                                                if (pathname.startsWith('/population/')) {
+                                                                    router.push(`${pathname}?${params.toString()}`);
+                                                                } else {
+                                                                    router.push(`/population?${params.toString()}`);
+                                                                }
+                                                            }}
+                                                            className={`appearance-none bg-transparent ${districtId ? 'text-indigo-900' : 'text-indigo-300'} font-black text-sm outline-none cursor-pointer pr-4 z-10 relative w-full disabled:cursor-not-allowed`}
+                                                        >
+                                                            <option value="">{districtId ? 'ทุกตำบล' : 'เลือกอำเภอ'}</option>
+                                                            {tambons.map((t) => (
+                                                                <option key={t.code} value={t.code}>{t.name}</option>
+                                                            ))}
+                                                        </select>
+                                                        <div className={`absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none ${districtId ? 'text-[#00BFA5]/60' : 'text-gray-300'}`}>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 12 0l-6 6z" /></svg>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </>
                                     )}
 
-                                    {activeTab === 'population' && (
+                                    {(activeTab === 'population') && (
                                         <div className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-full border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-blue-100 group">
                                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover:text-blue-400 transition-colors">สังกัด</span>
                                             <div className="relative">

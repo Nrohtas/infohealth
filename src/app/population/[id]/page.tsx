@@ -135,8 +135,9 @@ export default function PopulationDistrictPage({ params }: PageProps) {
                 <motion.div variants={itemVariants} className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                     <div className="flex items-center gap-4">
                         <Link href={`/population?year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`} className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/80 shadow-lg text-indigo-600 hover:scale-110 active:scale-95 transition-all duration-300 backdrop-blur-md border border-white/50">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256">
+                                <path d="M128,32a96,96,0,1,0,96,96A96,96,0,0,0,128,32Zm0,176a80,80,0,1,1,80-80A80,80,0,0,1,128,208Z" fill="currentColor" opacity="0.2"></path>
+                                <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm10.34-114.34a8,8,0,0,1,0,11.32L119.31,136H168a8,8,0,0,1,0,16H119.31l19.03,19.03a8,8,0,0,1-11.32,11.32l-32.68-32.69a8,8,0,0,1,0-11.32l32.68-32.68A8,8,0,0,1,138.34,101.66Z" fill="currentColor"></path>
                             </svg>
                         </Link>
                         <div>
@@ -186,8 +187,7 @@ export default function PopulationDistrictPage({ params }: PageProps) {
                                         <div className="flex items-center gap-2">
                                             <div className="p-1.5 bg-purple-100 rounded-lg text-purple-600">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                                                    <polyline points="9 22 9 12 15 12 15 22" />
+                                                    <polygon points="3 11 22 2 13 21 11 13 3 11" />
                                                 </svg>
                                             </div>
                                             <span className="font-bold">ตำบล</span>
@@ -206,21 +206,20 @@ export default function PopulationDistrictPage({ params }: PageProps) {
                                     </th>
                                     <th className="py-4 text-right">
                                         <div className="flex items-center justify-end gap-2 text-blue-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                <circle cx="12" cy="5" r="3" />
-                                                <path d="M12 8v13" />
-                                                <path d="M9 13h6" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M16 3h5v5" />
+                                                <path d="m21 3-7 7" />
+                                                <circle cx="9" cy="15" r="6" />
                                             </svg>
                                             <span className="font-bold">ชาย</span>
                                         </div>
                                     </th>
                                     <th className="py-4 text-right pr-4 rounded-r-xl">
                                         <div className="flex items-center justify-end gap-2 text-pink-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                <circle cx="12" cy="7" r="4" />
-                                                <path d="M12 11v10" />
-                                                <path d="M9 16h6" />
-                                                <path d="M5.5 21h13" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="12" cy="9" r="6" />
+                                                <path d="M12 15v7" />
+                                                <path d="M9 19h6" />
                                             </svg>
                                             <span className="font-bold">หญิง</span>
                                         </div>
