@@ -111,9 +111,9 @@ export default function HouseDistrictPage({ params }: PageProps) {
     const getHostColor = (hostype: string) => {
         const greenTypes = ['5', '7', '8', '11', '18'];
         const purpleTypes = ['21'];
-        if (greenTypes.includes(hostype)) return 'text-green-600 font-bold';
-        if (purpleTypes.includes(hostype)) return 'text-purple-600 font-bold';
-        return 'text-gray-900 font-bold';
+        if (greenTypes.includes(hostype)) return 'text-green-600';
+        if (purpleTypes.includes(hostype)) return 'text-purple-600';
+        return 'text-gray-900';
     };
 
     const formatNumber = (num: number) => new Intl.NumberFormat('th-TH').format(num);
@@ -154,8 +154,8 @@ export default function HouseDistrictPage({ params }: PageProps) {
                                     <th className="py-4 text-right pr-4 rounded-r-xl font-bold">
                                         <div className="flex items-center justify-end gap-2 text-purple-600">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                                                <polyline points="9 22 9 12 15 12 15 22" />
+                                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                                <circle cx="12" cy="10" r="3" />
                                             </svg>
                                             <span>บ้าน</span>
                                         </div>
@@ -175,10 +175,10 @@ export default function HouseDistrictPage({ params }: PageProps) {
                                                     className={`transition-all cursor-pointer group hover:bg-purple-50/50 ${expandedHosp === hos.hospcode ? 'bg-purple-50/50 shadow-sm' : ''}`}
                                                     onClick={() => toggleExpand(hos.hospcode)}
                                                 >
-                                                    <td className={`py-5 pl-4 font-mono text-sm ${getHostColor(hos.hostype_new)}`}>{hos.hospcode}</td>
-                                                    <td className={`py-5 ${getHostColor(hos.hostype_new)}`}>{hos.hospname}</td>
+                                                    <td className={`py-5 pl-4 font-mono text-sm font-bold ${getHostColor(hos.hostype_new)}`}>{hos.hospcode}</td>
+                                                    <td className={`py-5 font-bold ${getHostColor(hos.hostype_new)}`}>{hos.hospname}</td>
                                                     <td className="py-5 text-slate-600 font-medium">{hos.tmb_name}</td>
-                                                    <td className="py-5 pr-4 text-right text-purple-700 font-black text-xl tracking-tight">
+                                                    <td className={`py-5 pr-4 text-right font-black text-xl tracking-tight ${getHostColor(hos.hostype_new)}`}>
                                                         {hos.house ? formatNumber(hos.house) : '-'}
                                                     </td>
                                                 </tr>
@@ -238,7 +238,7 @@ export default function HouseDistrictPage({ params }: PageProps) {
                                         ))}
                                         <tr className="border-t-2 border-purple-100 bg-white/40 font-bold text-slate-800">
                                             <td colSpan={3} className="py-6 text-right pr-6 text-xl">รวมบ้านทั้งอำเภอ</td>
-                                            <td className="py-6 pr-4 text-right text-purple-700 text-3xl font-black tracking-tight">
+                                            <td className="py-6 pr-4 text-right text-slate-800 text-3xl font-black tracking-tight drop-shadow-sm">
                                                 {formatNumber(districtTotal.house)}
                                             </td>
                                         </tr>
