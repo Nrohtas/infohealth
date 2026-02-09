@@ -167,13 +167,13 @@ export default function PopulationPage() {
                 </motion.div>
 
                 {/* Details Row */}
-                <motion.div variants={itemVariants} className="space-y-6">
-                    <div className="flex justify-between items-center">
+                <div className="space-y-6">
+                    <div className="flex justify-between items-center sticky top-[100px] z-30 py-6 bg-white/95 backdrop-blur-md -mx-4 px-4 md:-mx-8 md:px-8 border-b border-gray-100 shadow-sm transition-all duration-300">
                         <h3 className="font-heading font-black text-black uppercase tracking-tight">ข้อมูลรายอำเภอ</h3>
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">เลือกอำเภอเพื่อดูรายละเอียด</p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {loading ? (
                             Array.from({ length: 9 }).map((_, i) => (
                                 <div key={i} className="dasher-card p-6 h-48 animate-pulse bg-gray-50/50" />
@@ -212,34 +212,45 @@ export default function PopulationPage() {
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-3 gap-3">
-                                            <div className={`flex flex-col gap-1.5 p-3 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300 group-hover:shadow-md text-center`}>
-                                                <span className={`text-[11px] font-black ${color.subText} uppercase tracking-tighter`}>รวม</span>
-                                                <p className={`text-base font-black ${color.text}`}>{formatNumber(district.population)}</p>
-                                            </div>
-
-                                            <div className={`flex flex-col gap-1.5 p-3 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300 group-hover:shadow-md text-center`}>
-                                                <div className="flex items-center justify-center gap-1">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-                                                        <path d="M16 3h5v5" />
-                                                        <path d="m21 3-7 7" />
-                                                        <circle cx="9" cy="15" r="6" />
-                                                    </svg>
-                                                    <span className={`text-[11px] font-black ${color.subText} uppercase tracking-tighter`}>ชาย</span>
+                                        <div className="flex flex-col gap-3">
+                                            <div className={`flex flex-col gap-1 p-4 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300 group-hover:shadow-md`}>
+                                                <div className="flex justify-between items-baseline">
+                                                    <span className={`text-sm font-black ${color.subText} uppercase tracking-tighter`}>ประชากรทั้งหมด</span>
+                                                    <span className={`text-xl font-black ${color.text} tracking-tight`}>{formatNumber(district.population)}</span>
                                                 </div>
-                                                <p className={`text-base font-black ${color.text}`}>{formatNumber(district.male)}</p>
-                                            </div>
 
-                                            <div className={`flex flex-col gap-1.5 p-3 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300 group-hover:shadow-md text-center`}>
-                                                <div className="flex items-center justify-center gap-1">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-pink-500">
-                                                        <circle cx="12" cy="9" r="6" />
-                                                        <path d="M12 15v7" />
-                                                        <path d="M9 19h6" />
-                                                    </svg>
-                                                    <span className={`text-[11px] font-black ${color.subText} uppercase tracking-tighter`}>หญิง</span>
+                                                {/* Gender Balance Bar */}
+                                                <div className="w-full h-3 bg-white/50 rounded-full overflow-hidden flex mt-2 shadow-inner">
+                                                    <div
+                                                        className="h-full bg-blue-400 transition-all duration-1000 ease-out flex items-center justify-center relative group/tooltip"
+                                                        style={{ width: `${(district.male / district.population) * 100}%` }}
+                                                    >
+                                                    </div>
+                                                    <div
+                                                        className="h-full bg-pink-400 transition-all duration-1000 ease-out flex items-center justify-center relative group/tooltip highlight-white/20"
+                                                        style={{ width: `${(district.female / district.population) * 100}%` }}
+                                                    >
+                                                    </div>
                                                 </div>
-                                                <p className={`text-base font-black ${color.text}`}>{formatNumber(district.female)}</p>
+
+                                                <div className="flex justify-between items-center mt-2">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
+                                                            <path d="M16 3h5v5" />
+                                                            <path d="m21 3-7 7" />
+                                                            <circle cx="9" cy="15" r="6" />
+                                                        </svg>
+                                                        <span className="text-sm text-blue-700 font-black">{formatNumber(district.male)}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-sm text-pink-700 font-black">{formatNumber(district.female)}</span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-pink-500">
+                                                            <circle cx="12" cy="9" r="6" />
+                                                            <path d="M12 15v7" />
+                                                            <path d="M9 19h6" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -247,8 +258,8 @@ export default function PopulationPage() {
                                 </Link>
                             );
                         })}
-                    </div>
-                </motion.div>
+                    </motion.div>
+                </div>
             </motion.div>
         </main>
     );

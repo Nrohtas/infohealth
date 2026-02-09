@@ -163,10 +163,10 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* 5. หลังคาเรือน */}
-          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#F3E5F5] to-[#E1BEE7] border-none shadow-sm">
+          {/* 5. บ้าน */}
+          <motion.div variants={itemVariants} className="bg-[#F3E5F5]/30 p-6 rounded-[2.5rem] border border-purple-100/50 backdrop-blur-sm hover:shadow-xl hover:shadow-purple-200/20 transition-all duration-500 group">
             <div className="flex justify-between items-center">
-              <span className="font-bold text-purple-800 uppercase text-sm tracking-widest">หลังคาเรือน</span>
+              <span className="font-bold text-purple-800 uppercase text-sm tracking-widest">บ้าน</span>
               <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-purple-500 shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map-pin">
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
@@ -240,7 +240,7 @@ export default function Home() {
                             <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                             <circle cx="12" cy="10" r="3" />
                           </svg>
-                          <span className={`text-[11px] font-black ${color.subText} uppercase tracking-widest`}>หลังคาเรือน</span>
+                          <span className={`text-[11px] font-black ${color.subText} uppercase tracking-widest`}>บ้าน</span>
                         </div>
                         <p className={`text-lg font-black ${color.text}`}>{formatNumber(district.house)}</p>
                       </div>
@@ -252,6 +252,6 @@ export default function Home() {
           </div>
         </motion.div>
       </motion.div>
-    </main>
+    </main >
   );
 }

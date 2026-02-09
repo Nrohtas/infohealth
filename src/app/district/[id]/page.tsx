@@ -198,7 +198,7 @@ export default function DistrictPage({ params }: PageProps) {
                                                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                                                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                                                 </svg>
-                                                <span>หลังคาเรือน</span>
+                                                <span>บ้าน</span>
                                             </div>
                                         </th>
                                     )}
@@ -243,7 +243,7 @@ export default function DistrictPage({ params }: PageProps) {
                                                                     </h4>
                                                                     <div className="flex gap-4 text-[10px] font-black uppercase text-gray-400 tracking-widest">
                                                                         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span> ประชากร</span>
-                                                                        {year !== 2567 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-500"></span> หลังคาเรือน</span>}
+                                                                        {year !== 2567 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-500"></span> บ้าน</span>}
                                                                     </div>
                                                                 </div>
                                                                 {villages[hos.hospcode] && villages[hos.hospcode].length > 0 ? (
@@ -263,7 +263,7 @@ export default function DistrictPage({ params }: PageProps) {
                                                                                         <>
                                                                                             <div className="w-px h-6 bg-gray-200"></div>
                                                                                             <div className="flex flex-col items-end">
-                                                                                                <span className="text-[10px] text-gray-400 uppercase font-black tracking-tighter">หลังคาเรือน</span>
+                                                                                                <span className="text-[10px] text-gray-400 uppercase font-black tracking-tighter">บ้าน</span>
                                                                                                 <span className="text-purple-600 font-bold text-sm">{new Intl.NumberFormat('th-TH').format(v.house || 0)}</span>
                                                                                             </div>
                                                                                         </>
