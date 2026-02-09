@@ -10,74 +10,66 @@ export async function GET(request: Request) {
         const yearParam = searchParams.get('year') || '2568';
         const year = parseInt(yearParam, 10);
 
-        if (!ampurcode && !tambon_code) {
-            return NextResponse.json({ error: 'Missing ampurcode or tambon_code parameter' }, { status: 400 });
-        }
+        let whereConditions: string[] = [];
+        let queryParams: any[] = [];
 
-        let whereClause = "";
-        let whereParams: any[] = [];
-
-        if (ampurcode) {
-            if (!/^\d{4}$/.test(ampurcode)) {
-                return NextResponse.json({ error: 'Invalid ampurcode format' }, { status: 400 });
-            }
-            whereClause = "ampurcode = ?";
-            whereParams.push(ampurcode);
-        } else if (tambon_code) {
+        if (tambon_code) {
             if (!/^\d{6}$/.test(tambon_code)) {
                 return NextResponse.json({ error: 'Invalid tambon_code format' }, { status: 400 });
             }
-            whereClause = "tamboncode = ?";
-            whereParams.push(tambon_code);
+            whereConditions.push("p.subdistcode = ?");
+            queryParams.push(tambon_code);
+        } else if (ampurcode) {
+            if (!/^\d{4}$/.test(ampurcode)) {
+                return NextResponse.json({ error: 'Invalid ampurcode format' }, { status: 400 });
+            }
+            whereConditions.push("p.distcode = ?");
+            queryParams.push(ampurcode);
+        } else {
+            return NextResponse.json({ error: 'Missing ampurcode or tambon_code parameter' }, { status: 400 });
         }
 
-        // Derive table names
         const yy = String(year).slice(-2);
         const popTable = `pop${yy}06`;
-        const houseTable = `house${year}`;
-        const houseFieldName = year >= 2568 ? 'house' : 'household';
+        let houseTable = `house${year}`;
+        let houseFieldName = year >= 2568 ? 'house' : 'household';
 
-        // Validate table names
-        if (!/^[a-zA-Z0-9]+$/.test(popTable) || !/^[a-zA-Z0-9]+$/.test(houseTable)) {
+        if (year === 2568) {
+            houseTable = 'infohealth.house6712';
+            houseFieldName = 'house';
+        } else if (year === 2567) {
+            houseTable = 'infohealth.house6612';
+            houseFieldName = 'house';
+        }
+
+        if (!/^[a-zA-Z0-9]+$/.test(popTable) || !/^[a-zA-Z0-9_.]+$/.test(houseTable)) {
             return NextResponse.json({ error: 'Invalid year parameter' }, { status: 400 });
         }
 
-        // Query villages
-        let rows;
-        if (year === 2567) {
-            [rows] = await pool.query<RowDataPacket[]>(`
-                SELECT 
-                    hospcode,
-                    villagecode,
-                    villagename,
-                    CAST(popall AS UNSIGNED) as population,
-                    CAST(maleall AS UNSIGNED) as male,
-                    CAST(femaleall AS UNSIGNED) as female,
-                    0 as households
-                FROM ${popTable}
-                WHERE ${whereClause}
-                ORDER BY hospcode, villagecode
-            `, whereParams);
-        } else {
-            [rows] = await pool.query<RowDataPacket[]>(`
-                SELECT 
-                    p.hospcode,
-                    p.villagecode,
-                    p.villagename,
-                    CAST(p.popall AS UNSIGNED) as population,
-                    CAST(p.maleall AS UNSIGNED) as male,
-                    CAST(p.femaleall AS UNSIGNED) as female,
-                    IFNULL(h.households, 0) as households
-                FROM ${popTable} p
-                LEFT JOIN (
-                    SELECT villagecode, SUM(CAST(${houseFieldName} AS UNSIGNED)) as households
-                    FROM ${houseTable}
-                    GROUP BY villagecode
-                ) h ON p.villagecode = h.villagecode
-                WHERE p.${whereClause}
-                ORDER BY p.hospcode, p.villagecode
-            `, whereParams);
-        }
+        const houseWhere = (year === 2567 || year === 2568) ? "AND villagecode != '0'" : "";
+        const whereClause = whereConditions.join(" AND ");
+
+        const query = `
+            SELECT 
+                p.hospcode,
+                p.villagecode,
+                p.villagename,
+                CAST(p.popall AS UNSIGNED) as population,
+                CAST(p.maleall AS UNSIGNED) as male,
+                CAST(p.femaleall AS UNSIGNED) as female,
+                IFNULL(h.households, 0) as households
+            FROM ${popTable} p
+            LEFT JOIN (
+                SELECT villagecode, SUM(CAST(${houseFieldName} AS UNSIGNED)) as households
+                FROM ${houseTable}
+                WHERE 1=1 ${houseWhere}
+                GROUP BY villagecode
+            ) h ON p.villagecode = h.villagecode
+            WHERE ${whereClause}
+            ORDER BY p.hospcode, p.villagecode
+        `;
+
+        const [rows] = await pool.query<RowDataPacket[]>(query, queryParams);
 
         return NextResponse.json({
             ampurcode,

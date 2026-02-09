@@ -34,10 +34,18 @@ export async function GET(request: Request) {
         // Validate table names to prevent SQL injection
         const yy = String(year).slice(-2);
         const popTable = `pop${yy}06`;
-        const houseTable = `house${year}`;
-        const houseFieldName = year >= 2568 ? 'house' : 'household';
+        let houseTable = `house${year}`;
+        let houseFieldName = year >= 2568 ? 'house' : 'household';
 
-        if (!/^[a-zA-Z0-9]+$/.test(popTable) || !/^[a-zA-Z0-9]+$/.test(houseTable)) {
+        if (year === 2568) {
+            houseTable = 'infohealth.house6712';
+            houseFieldName = 'house';
+        } else if (year === 2567) {
+            houseTable = 'infohealth.house6612';
+            houseFieldName = 'house';
+        }
+
+        if (!/^[a-zA-Z0-9]+$/.test(popTable) || !/^[a-zA-Z0-9_.]+$/.test(houseTable)) {
             return NextResponse.json({ error: 'Invalid year parameter' }, { status: 400 });
         }
 
@@ -71,7 +79,7 @@ export async function GET(request: Request) {
                 (SELECT SUM(CAST(popall AS UNSIGNED)) FROM ${popTable} WHERE hospcode = h.hospcode) as population,
                 (SELECT SUM(CAST(maleall AS UNSIGNED)) FROM ${popTable} WHERE hospcode = h.hospcode) as male,
                 (SELECT SUM(CAST(femaleall AS UNSIGNED)) FROM ${popTable} WHERE hospcode = h.hospcode) as female,
-                ${year === 2567 ? 'NULL' : `(SELECT SUM(CAST(${houseFieldName} AS UNSIGNED)) FROM ${houseTable} WHERE hospcode = h.hospcode)`} as house
+                (SELECT SUM(CAST(${houseFieldName} AS UNSIGNED)) FROM ${houseTable} WHERE hospcode = h.hospcode ${(year === 2567 || year === 2568) ? "AND villagecode != '0'" : ""}) as house
             FROM infohealth.hospital h
             WHERE ${whereConditions.join(' AND ')}
             ORDER BY h.hospcode
@@ -88,14 +96,12 @@ export async function GET(request: Request) {
         `, totalParams);
 
         let houseTotal = 0;
-        if (year !== 2567) {
-            const [houseTotalRows] = await pool.query<RowDataPacket[]>(`
-                SELECT SUM(CAST(${houseFieldName} AS UNSIGNED)) as household 
-                FROM ${houseTable} 
-                WHERE ${totalWhere}
-            `, totalParams);
-            houseTotal = Number(houseTotalRows[0]?.household || 0);
-        }
+        const [houseTotalRows] = await pool.query<RowDataPacket[]>(`
+            SELECT SUM(CAST(${houseFieldName} AS UNSIGNED)) as household 
+            FROM ${houseTable} 
+            WHERE ${totalWhere} ${(year === 2567 || year === 2568) ? "AND villagecode != '0'" : ""}
+        `, totalParams);
+        houseTotal = Number(houseTotalRows[0]?.household || 0);
 
         return NextResponse.json({
             ampurcode,

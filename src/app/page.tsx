@@ -164,7 +164,7 @@ export default function Home() {
           </motion.div>
 
           {/* 5. บ้าน */}
-          <motion.div variants={itemVariants} className="bg-[#F3E5F5]/30 p-6 rounded-[2.5rem] border border-purple-100/50 backdrop-blur-sm hover:shadow-xl hover:shadow-purple-200/20 transition-all duration-500 group">
+          <motion.div variants={itemVariants} className="dasher-card p-6 flex flex-col gap-8 bg-gradient-to-br from-[#F3E5F5] to-[#E1BEE7] border-none shadow-sm">
             <div className="flex justify-between items-center">
               <span className="font-bold text-purple-800 uppercase text-sm tracking-widest">บ้าน</span>
               <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-purple-500 shadow-sm">
@@ -175,7 +175,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              {loading ? <div className="h-10 w-24 bg-white/40 animate-pulse rounded-lg" /> : <p className="text-3xl font-heading font-black text-purple-900">{year === 2567 ? '-' : (stats ? formatNumber(stats.house) : '-')}</p>}
+              {loading ? <div className="h-10 w-24 bg-white/40 animate-pulse rounded-lg" /> : <p className="text-3xl font-heading font-black text-purple-900">{stats ? formatNumber(stats.house) : '-'}</p>}
               <p className="text-sm font-bold text-purple-500/70 uppercase tracking-wider">จำนวนที่อยู่อาศัยทั้งหมด</p>
             </div>
           </motion.div>
@@ -219,7 +219,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className={`grid ${year === 2567 ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
+                  <div className={`grid grid-cols-2 gap-4`}>
                     <div className={`flex flex-col gap-1.5 p-3 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300`}>
                       <div className="flex items-center gap-1.5 mb-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500/70">
@@ -233,18 +233,16 @@ export default function Home() {
                       <p className={`text-lg font-black ${color.text}`}>{formatNumber(district.population)}</p>
                     </div>
 
-                    {year !== 2567 && (
-                      <div className={`flex flex-col gap-1.5 p-3 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300`}>
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500/70">
-                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                            <circle cx="12" cy="10" r="3" />
-                          </svg>
-                          <span className={`text-[11px] font-black ${color.subText} uppercase tracking-widest`}>บ้าน</span>
-                        </div>
-                        <p className={`text-lg font-black ${color.text}`}>{formatNumber(district.house)}</p>
+                    <div className={`flex flex-col gap-1.5 p-3 rounded-2xl ${color.statBg} shadow-sm backdrop-blur-md transition-all duration-300`}>
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500/70">
+                          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                        <span className={`text-[11px] font-black ${color.subText} uppercase tracking-widest`}>บ้าน</span>
                       </div>
-                    )}
+                      <p className={`text-lg font-black ${color.text}`}>{formatNumber(district.house)}</p>
+                    </div>
                   </div>
                 </motion.div>
               );

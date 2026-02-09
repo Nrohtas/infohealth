@@ -15,13 +15,23 @@ export async function GET(request: Request) {
 
         const yy = String(year).slice(-2);
         const popTable = `pop${yy}06`;
-        const houseTable = `house${year}`;
-        const houseFieldName = year >= 2568 ? 'house' : 'household';
+        let houseTable = `house${year}`;
+        let houseFieldName = year >= 2568 ? 'house' : 'household';
+
+        if (year === 2568) {
+            houseTable = 'infohealth.house6712';
+            houseFieldName = 'house';
+        } else if (year === 2567) {
+            houseTable = 'infohealth.house6612';
+            houseFieldName = 'house';
+        }
 
         // Validate table names
-        if (!/^[a-zA-Z0-9]+$/.test(popTable) || !/^[a-zA-Z0-9]+$/.test(houseTable)) {
+        if (!/^[a-zA-Z0-9]+$/.test(popTable) || !/^[a-zA-Z0-9_.]+$/.test(houseTable)) {
             return NextResponse.json({ error: 'Invalid year parameter' }, { status: 400 });
         }
+
+        const houseWhere = (year === 2567 || year === 2568) ? "AND p.villagecode != '0'" : "";
 
         // Affiliation Filter Logic
         let affiliationJoin = "";
@@ -102,41 +112,45 @@ export async function GET(request: Request) {
             });
         });
 
-        // Only query households if it's not 2567 (missing table)
-        if (year !== 2567) {
-            const [houseTotalRows] = await pool.query<RowDataPacket[]>(`
-                SELECT SUM(CAST(p.${houseFieldName} AS UNSIGNED)) as household 
-                FROM ${houseTable} p
-                ${affiliationJoin}
-                WHERE p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtFilter}
-            `, queryParams);
-            house = houseTotalRows[0]?.household || 0;
-
-            const [houseDistRows] = await pool.query<RowDataPacket[]>(`
-                SELECT p.ampurcode, p.ampurname, SUM(CAST(p.${houseFieldName} AS UNSIGNED)) as house 
-                FROM ${houseTable} p
-                ${affiliationJoin}
-                WHERE p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtFilter}
-                GROUP BY p.ampurcode, p.ampurname
-                ORDER BY p.ampurcode
-            `, queryParams);
-
-            houseDistRows.forEach((row: any) => {
-                if (districtsMap.has(row.ampurcode)) {
-                    const existing = districtsMap.get(row.ampurcode);
-                    existing.house = Number(row.house);
-                } else {
-                    districtsMap.set(row.ampurcode, {
-                        ampurcode: row.ampurcode,
-                        ampurname: row.ampurname,
-                        population: 0,
-                        male: 0,
-                        female: 0,
-                        house: Number(row.house)
-                    });
-                }
-            });
+        // Query households for all years
+        // Query households for all years
+        let houseExtraFilter = "";
+        if (year === 2567 || year === 2568) {
+            houseExtraFilter = " AND p.villagecode != '0' ";
         }
+
+        const [houseTotalRows] = await pool.query<RowDataPacket[]>(`
+            SELECT SUM(CAST(p.${houseFieldName} AS UNSIGNED)) as household 
+            FROM ${houseTable} p
+            ${affiliationJoin}
+            WHERE p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtFilter} ${houseExtraFilter}
+        `, queryParams);
+        house = houseTotalRows[0]?.household || 0;
+
+        const [houseDistRows] = await pool.query<RowDataPacket[]>(`
+            SELECT p.ampurcode, p.ampurname, SUM(CAST(p.${houseFieldName} AS UNSIGNED)) as house 
+            FROM ${houseTable} p
+            ${affiliationJoin}
+            WHERE p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtFilter} ${houseExtraFilter}
+            GROUP BY p.ampurcode, p.ampurname
+            ORDER BY p.ampurcode
+        `, queryParams);
+
+        houseDistRows.forEach((row: any) => {
+            if (districtsMap.has(row.ampurcode)) {
+                const existing = districtsMap.get(row.ampurcode);
+                existing.house = Number(row.house);
+            } else {
+                districtsMap.set(row.ampurcode, {
+                    ampurcode: row.ampurcode,
+                    ampurname: row.ampurname,
+                    population: 0,
+                    male: 0,
+                    female: 0,
+                    house: Number(row.house)
+                });
+            }
+        });
 
         const districts = Array.from(districtsMap.values()).sort((a: any, b: any) => a.ampurcode.localeCompare(b.ampurcode));
 
