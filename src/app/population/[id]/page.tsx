@@ -88,20 +88,37 @@ export default function PopulationDistrictPage({ params }: PageProps) {
                 setDistrictTotal(hospData.districtTotal || { population: 0, male: 0, female: 0 });
 
                 // Fetch villages
-                const villageRes = await fetch(`/api/villages?${filterParam}&year=${year}`);
-                const villageData = await villageRes.json();
+                const villageRes = await fetch(`/api/villages?${filterParam}&year=${year}`, { cache: 'no-store' });
+                console.log('Village API Status:', villageRes.status, villageRes.statusText);
 
-                // Group villages by hospcode
-                const villageMap: Record<string, any[]> = {};
-                if (villageData.villages) {
-                    villageData.villages.forEach((v: any) => {
-                        if (!villageMap[v.hospcode]) {
-                            villageMap[v.hospcode] = [];
-                        }
-                        villageMap[v.hospcode].push(v);
-                    });
+                const villageText = await villageRes.text();
+                console.log('Village API Raw Response:', villageText);
+
+                try {
+                    const villageData = JSON.parse(villageText);
+                    console.log('Village Data:', villageData);
+
+                    if (!villageRes.ok) {
+                        console.error('Village API Error Object:', villageData);
+                    }
+
+                    // Group villages by hospcode...
+                    // (logic regarding villageData stays here, but need to reconstruct the flow)
+                    // Group villages by hospcode
+                    const villageMap: Record<string, any[]> = {};
+                    if (villageData.villages) {
+                        villageData.villages.forEach((v: any) => {
+                            if (!villageMap[v.hospcode]) {
+                                villageMap[v.hospcode] = [];
+                            }
+                            villageMap[v.hospcode].push(v);
+                        });
+                    }
+                    setVillages(villageMap);
+
+                } catch (parseError) {
+                    console.error('Failed to parse Village API response:', parseError);
                 }
-                setVillages(villageMap);
             } catch (error) {
                 console.error('Failed to fetch data', error);
             } finally {
