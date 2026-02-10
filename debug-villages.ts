@@ -12,7 +12,7 @@ async function run() {
     });
 
     const ampurcode = '6501';
-    const year = 2568;
+    const year: number = 2568;
 
     // Logic from route.ts
     const yy = String(year).slice(-2);
