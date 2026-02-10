@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
+import SourceReference from '@/components/SourceReference';
 
 interface District {
   ampurcode: string;
@@ -249,6 +250,10 @@ export default function Home() {
             })}
           </div>
         </motion.div>
+        <SourceReference
+          url="https://stat.bora.dopa.go.th/new_stat/webPage/statByAgeMonth.php"
+          subTitle="ระบบสถิติจำนวนประชากรและบ้าน (สถิติจำนวนประชากร)"
+        />
       </motion.div>
     </main >
   );

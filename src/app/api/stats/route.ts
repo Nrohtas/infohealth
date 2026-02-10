@@ -55,36 +55,75 @@ export async function GET(request: Request) {
         let totalHospitals = 0;
         let districtsMap = new Map();
 
-        let districtFilter = "";
-        const queryParams: any[] = [];
+        // Default provincial scope for summary boxes
+        const provinceScope = '65%';
+        let geoFilter = " AND ampurcode LIKE ? ";
+        let geoParam = provinceScope;
 
         if (tambonId) {
-            districtFilter = " AND p.tamboncode = ? ";
-            queryParams.push(tambonId);
+            geoFilter = " AND tamboncode = ? ";
+            geoParam = tambonId;
         } else if (districtId) {
-            districtFilter = " AND p.ampurcode = ? ";
-            queryParams.push(districtId);
+            geoFilter = " AND ampurcode = ? ";
+            geoParam = districtId;
         }
 
-        // Get Totals filtered by Affiliation/District/Tambon if provided
+        const geoQueryParams = [geoParam];
+
+        // 1. Get Totals from Population Table (Population, Male, Female)
         const [statsRows] = await pool.query<RowDataPacket[]>(`
             SELECT 
                 SUM(CAST(p.popall AS UNSIGNED)) as pop,
                 SUM(CAST(p.maleall AS UNSIGNED)) as male,
-                SUM(CAST(p.femaleall AS UNSIGNED)) as female,
-                COUNT(DISTINCT p.tamboncode) as tambons,
-                COUNT(DISTINCT p.villagecode) as villages,
-                COUNT(DISTINCT p.hospcode) as hospitals
+                SUM(CAST(p.femaleall AS UNSIGNED)) as female
             FROM ${popTable} p
             ${affiliationJoin}
-            WHERE p.provincecode = '65' AND p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtFilter}
-        `, queryParams);
+            WHERE p.provincecode = '65' ${geoFilter} ${affiliationFilter}
+        `, geoQueryParams);
+
         midYearPopulation = statsRows[0]?.pop || 0;
         male = statsRows[0]?.male || 0;
         female = statsRows[0]?.female || 0;
-        totalVillages = statsRows[0]?.villages || 0;
-        const totalTambons = statsRows[0]?.tambons || 0;
-        totalHospitals = statsRows[0]?.hospitals || 0;
+
+        // 2. Get Total Hospitals from Hospital Table
+        let hospAffiliationFilter = "";
+        if (affiliation === 'moph') {
+            hospAffiliationFilter = " AND hostype_new IN ('5', '7', '8', '11', '18')";
+        } else if (affiliation === 'local') {
+            hospAffiliationFilter = " AND hostype_new = '21'";
+        } else if (affiliation === 'other') {
+            hospAffiliationFilter = " AND hostype_new NOT IN ('5', '7', '8', '11', '18', '21')";
+        }
+
+        let hospGeoFilter = " AND amp_code LIKE ? ";
+        if (tambonId) {
+            hospGeoFilter = " AND tmb_code = ? ";
+        } else if (districtId) {
+            hospGeoFilter = " AND amp_code = ? ";
+        }
+
+        const [hospStatsRows] = await pool.query<RowDataPacket[]>(`
+            SELECT COUNT(DISTINCT hospcode) as count 
+            FROM infohealth.hospital 
+            WHERE provcode = '65' ${hospGeoFilter}
+        `, [geoParam]);
+        totalHospitals = hospStatsRows[0]?.count || 0;
+
+        // 3. Get Total Tambons from Pop Table (representing active administrative units in survey)
+        const [tambonStatsRows] = await pool.query<RowDataPacket[]>(`
+            SELECT COUNT(DISTINCT tamboncode) as count 
+            FROM ${popTable} 
+            WHERE provincecode = '65' ${geoFilter}
+        `, [geoParam]);
+        const totalTambons = tambonStatsRows[0]?.count || 0;
+
+        // 4. Get Total Villages from Pop Table (counting unique villagecode excluding the '00' suffix)
+        const [villageStatsRows] = await pool.query<RowDataPacket[]>(`
+            SELECT COUNT(DISTINCT villagecode) as count 
+            FROM ${popTable} 
+            WHERE provincecode = '65' AND villagecode NOT LIKE '%00' ${geoFilter}
+        `, [geoParam]);
+        totalVillages = villageStatsRows[0]?.count || 0;
 
         // Get District Population Breakdown
         const [popDistRows] = await pool.query<RowDataPacket[]>(`
@@ -96,10 +135,10 @@ export async function GET(request: Request) {
                 SUM(CAST(p.femaleall AS UNSIGNED)) as female
             FROM ${popTable} p
             ${affiliationJoin}
-            WHERE p.provincecode = '65' AND p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtFilter}
+            WHERE p.provincecode = '65' AND p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtId ? " AND p.ampurcode = ? " : ""} ${tambonId ? " AND p.tamboncode = ? " : ""}
             GROUP BY p.ampurcode, p.ampurname
             ORDER BY p.ampurcode
-        `, queryParams);
+        `, districtId || tambonId ? [districtId || tambonId] : []);
 
         popDistRows.forEach((row: any) => {
             districtsMap.set(row.ampurcode, {
@@ -123,18 +162,18 @@ export async function GET(request: Request) {
             SELECT SUM(CAST(p.${houseFieldName} AS UNSIGNED)) as household 
             FROM ${houseTable} p
             ${affiliationJoin}
-            WHERE p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtFilter} ${houseExtraFilter}
-        `, queryParams);
+            WHERE p.provincecode = '65' ${geoFilter} ${affiliationFilter} ${houseExtraFilter}
+        `, geoQueryParams);
         house = houseTotalRows[0]?.household || 0;
 
         const [houseDistRows] = await pool.query<RowDataPacket[]>(`
             SELECT p.ampurcode, p.ampurname, SUM(CAST(p.${houseFieldName} AS UNSIGNED)) as house 
             FROM ${houseTable} p
             ${affiliationJoin}
-            WHERE p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtFilter} ${houseExtraFilter}
+            WHERE p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtId ? " AND p.ampurcode = ? " : ""} ${tambonId ? " AND p.tamboncode = ? " : ""} ${houseExtraFilter}
             GROUP BY p.ampurcode, p.ampurname
             ORDER BY p.ampurcode
-        `, queryParams);
+        `, districtId || tambonId ? [districtId || tambonId] : []);
 
         houseDistRows.forEach((row: any) => {
             if (districtsMap.has(row.ampurcode)) {

@@ -13,7 +13,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Dashboard ข้อมูลสุขภาพจังหวัดพิษณุโลก",
+  title: "InfoPLKHealth Dashboard",
   description: "ระบบรายงานสถิติข้อมูลสุขภาพและประชากร จังหวัดพิษณุโลก",
   icons: {
     icon: "/image/logo_digital_health.png",

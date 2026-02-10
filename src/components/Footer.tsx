@@ -8,6 +8,8 @@ const Footer = () => {
                     <div className="flex flex-col gap-1">
                         <p className="text-slate-400 text-xs font-medium tracking-tight">
                             Copyright &copy; 2026 <span className="text-indigo-600/80 font-bold">Digital Health Group</span> of Phitsanulok Provincial Public Health Office
+                            <span className="mx-2 text-slate-200">|</span>
+                            <span className="text-[10px] text-slate-300 font-bold tracking-widest uppercase">V20260210</span>
                         </p>
                     </div>
                     <div className="flex items-center gap-4">

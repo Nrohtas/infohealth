@@ -4,6 +4,7 @@ import React, { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
+import SourceReference from '@/components/SourceReference';
 
 interface Hospital {
     hospcode: string;
@@ -282,7 +283,7 @@ export default function DistrictPage({ params }: PageProps) {
                                             </React.Fragment>
                                         ))}
                                         <tr className="border-t font-bold text-gray-800">
-                                            <td className="py-4 pl-4">รวม</td>
+                                            <td className="py-4 pl-4 uppercase font-black text-slate-700 tracking-tighter">รวมทั้งหมด</td>
                                             <td colSpan={2}></td>
                                             <td className="py-4 text-right">
                                                 {new Intl.NumberFormat('th-TH').format(districtTotal.population)}
@@ -299,6 +300,10 @@ export default function DistrictPage({ params }: PageProps) {
                         </table>
                     </div>
                 </motion.div>
+                <SourceReference
+                    url="https://stat.bora.dopa.go.th/new_stat/webPage/statByAgeMonth.php"
+                    subTitle="ระบบสถิติจำนวนประชากรและบ้าน (สถิติจำนวนประชากร)"
+                />
             </motion.div>
         </div>
     );

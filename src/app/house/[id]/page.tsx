@@ -4,6 +4,7 @@ import React, { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
+import SourceReference from '@/components/SourceReference';
 
 interface Hospital {
     hospcode: string;
@@ -237,7 +238,7 @@ export default function HouseDistrictPage({ params }: PageProps) {
                                             </React.Fragment>
                                         ))}
                                         <tr className="border-t-2 border-purple-100 bg-white/40 font-bold text-slate-800">
-                                            <td colSpan={3} className="py-6 text-right pr-6 text-xl">รวมบ้านทั้งอำเภอ</td>
+                                            <td colSpan={3} className="py-6 text-right pr-6 text-xl">รวมทั้งหมด</td>
                                             <td className="py-6 pr-4 text-right text-slate-800 text-3xl font-black tracking-tight drop-shadow-sm">
                                                 {formatNumber(districtTotal.house)}
                                             </td>
@@ -248,6 +249,7 @@ export default function HouseDistrictPage({ params }: PageProps) {
                         </table>
                     </div>
                 </div>
+                <SourceReference />
             </motion.div>
         </div >
     );

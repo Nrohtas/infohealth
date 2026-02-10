@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
+import SourceReference from '@/components/SourceReference';
 
 interface District {
     ampurcode: string;
@@ -247,6 +248,7 @@ export default function HousePage() {
                         })}
                     </motion.div>
                 </div>
+                <SourceReference />
             </motion.div>
         </main>
     );
