@@ -171,7 +171,15 @@ export default function PopulationPage() {
                 <div className="space-y-6">
                     <div className="flex justify-between items-center sticky top-[100px] z-30 py-6 bg-white/95 backdrop-blur-md -mx-4 px-4 md:-mx-8 md:px-8 border-b border-gray-100 shadow-sm transition-all duration-300">
                         <h3 className="font-heading font-black text-black uppercase tracking-tight">ข้อมูลรายอำเภอ</h3>
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">เลือกอำเภอเพื่อดูรายละเอียด</p>
+                        <a
+                            href="https://docs.google.com/spreadsheets/d/128NN3wWOqzc6LwrMVkYPPYIC9yJVojQb5DUUhky92kM/edit?gid=1893216023#gid=1893216023"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[14px] font-bold uppercase tracking-[0.2em] text-slate-400 hover:text-green-600 transition-all duration-300 flex items-center gap-2"
+                        >
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                            ประชากรกลางปี (Sheet)
+                        </a>
                     </div>
 
                     <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -261,16 +269,7 @@ export default function PopulationPage() {
                         })}
                     </motion.div>
                 </div>
-                <div className="mt-16 pb-12 flex flex-col items-center gap-6">
-                    <a
-                        href="https://docs.google.com/spreadsheets/d/128NN3wWOqzc6LwrMVkYPPYIC9yJVojQb5DUUhky92kM/edit?gid=1893216023#gid=1893216023"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[14px] font-bold uppercase tracking-[0.2em] text-slate-400 hover:text-indigo-500 transition-all duration-300 flex items-center gap-2.5"
-                    >
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                        ประชากรกลางปีรายอายุ (Google Sheet)
-                    </a>
+                <div className="mt-16 pb-12 flex flex-col items-center">
                     <SourceReference
                         url="https://stat.bora.dopa.go.th/new_stat/webPage/statByAgeMonth.php"
                         subTitle="ระบบสถิติจำนวนประชากรและบ้าน (สถิติจำนวนประชากร)"
