@@ -261,10 +261,21 @@ export default function PopulationPage() {
                         })}
                     </motion.div>
                 </div>
-                <SourceReference
-                    url="https://stat.bora.dopa.go.th/new_stat/webPage/statByAgeMonth.php"
-                    subTitle="ระบบสถิติจำนวนประชากรและบ้าน (สถิติจำนวนประชากร)"
-                />
+                <div className="mt-16 pb-12 flex flex-col items-center gap-6">
+                    <a
+                        href="https://docs.google.com/spreadsheets/d/128NN3wWOqzc6LwrMVkYPPYIC9yJVojQb5DUUhky92kM/edit?gid=1893216023#gid=1893216023"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 hover:text-indigo-500 transition-all duration-300 flex items-center gap-2"
+                    >
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                        ประชากรกลางปีรายอายุ (Google Sheet)
+                    </a>
+                    <SourceReference
+                        url="https://stat.bora.dopa.go.th/new_stat/webPage/statByAgeMonth.php"
+                        subTitle="ระบบสถิติจำนวนประชากรและบ้าน (สถิติจำนวนประชากร)"
+                    />
+                </div>
             </motion.div>
         </main>
     );
