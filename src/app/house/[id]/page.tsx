@@ -109,12 +109,45 @@ export default function HouseDistrictPage({ params }: PageProps) {
         setExpandedHosp(expandedHosp === hospcode ? null : hospcode);
     };
 
-    const getHostColor = (hostype: string) => {
+    const getThemeColors = (hostype: string) => {
         const greenTypes = ['5', '7', '8', '11', '18'];
         const purpleTypes = ['21'];
-        if (greenTypes.includes(hostype)) return 'text-green-600';
-        if (purpleTypes.includes(hostype)) return 'text-purple-600';
-        return 'text-gray-900';
+        if (greenTypes.includes(hostype)) return {
+            text: 'text-green-600',
+            textDark: 'text-green-700',
+            textLight: 'text-green-400',
+            bg: 'bg-green-50',
+            bgLight: 'bg-green-50/20',
+            bgIcon: 'bg-green-100',
+            border: 'border-green-100',
+            hover: 'hover:bg-green-50/50',
+            active: 'bg-green-50/50',
+            shadow: 'shadow-green-100'
+        };
+        if (purpleTypes.includes(hostype)) return {
+            text: 'text-purple-600',
+            textDark: 'text-purple-700',
+            textLight: 'text-purple-400',
+            bg: 'bg-purple-50',
+            bgLight: 'bg-purple-50/20',
+            bgIcon: 'bg-purple-100',
+            border: 'border-purple-100',
+            hover: 'hover:bg-purple-50/50',
+            active: 'bg-purple-50/50',
+            shadow: 'shadow-purple-100'
+        };
+        return {
+            text: 'text-slate-600',
+            textDark: 'text-slate-700',
+            textLight: 'text-slate-400',
+            bg: 'bg-slate-50',
+            bgLight: 'bg-slate-50/20',
+            bgIcon: 'bg-slate-100',
+            border: 'border-slate-200',
+            hover: 'hover:bg-slate-50',
+            active: 'bg-slate-50',
+            shadow: 'shadow-slate-100'
+        };
     };
 
     const formatNumber = (num: number) => new Intl.NumberFormat('th-TH').format(num);
@@ -170,73 +203,76 @@ export default function HouseDistrictPage({ params }: PageProps) {
                                     <tr><td colSpan={4} className="text-center py-12 text-slate-400">ไม่พบข้อมูล</td></tr>
                                 ) : (
                                     <>
-                                        {hospitals.map((hos) => (
-                                            <React.Fragment key={hos.hospcode}>
-                                                <tr
-                                                    className={`transition-all cursor-pointer group hover:bg-purple-50/50 ${expandedHosp === hos.hospcode ? 'bg-purple-50/50 shadow-sm' : ''}`}
-                                                    onClick={() => toggleExpand(hos.hospcode)}
-                                                >
-                                                    <td className={`py-5 pl-4 font-mono text-sm font-bold ${getHostColor(hos.hostype_new)}`}>{hos.hospcode}</td>
-                                                    <td className={`py-5 font-bold ${getHostColor(hos.hostype_new)}`}>{hos.hospname}</td>
-                                                    <td className="py-5 text-slate-600 font-medium">{hos.tmb_name}</td>
-                                                    <td className={`py-5 pr-4 text-right font-black text-xl tracking-tight ${getHostColor(hos.hostype_new)}`}>
-                                                        {hos.house ? formatNumber(hos.house) : '-'}
-                                                    </td>
-                                                </tr>
-                                                {expandedHosp === hos.hospcode && (
-                                                    <tr>
-                                                        <td colSpan={4} className="p-0 border-none">
-                                                            <motion.div
-                                                                initial={{ opacity: 0, height: 0 }}
-                                                                animate={{ opacity: 1, height: 'auto' }}
-                                                                className="bg-purple-50/20 p-6 shadow-inner"
-                                                            >
-                                                                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-purple-100">
-                                                                    <div className="flex justify-between items-center mb-6">
-                                                                        <div className="flex items-center gap-3">
-                                                                            <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                                                                                    <circle cx="12" cy="10" r="3" />
-                                                                                </svg>
-                                                                            </div>
-                                                                            <h4 className="font-bold text-slate-700 uppercase tracking-tighter">
-                                                                                รายชื่อหมู่บ้านในเขตรับผิดชอบ ({villages[hos.hospcode]?.length || 0})
-                                                                            </h4>
-                                                                        </div>
-                                                                    </div>
-                                                                    {villages[hos.hospcode] && villages[hos.hospcode].length > 0 ? (
-                                                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                                            {villages[hos.hospcode].map((v, i) => (
-                                                                                <div key={`${v.villagecode}-${i}`} className="flex flex-col p-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                                                                                    <div className="flex items-baseline gap-2 mb-4 border-b border-slate-50 pb-2">
-                                                                                        <span className="text-purple-400 text-xs font-mono font-bold">{v.villagecode.slice(-2)}</span>
-                                                                                        <span className="text-slate-700 font-black truncate">{v.villagename}</span>
-                                                                                    </div>
-                                                                                    <div className="flex justify-between items-center">
-                                                                                        <div className="flex flex-col">
-                                                                                            <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider mb-0.5">จำนวนบ้าน</span>
-                                                                                            <span className="text-purple-700 font-black text-2xl tracking-tighter">{formatNumber(v.households)}</span>
-                                                                                        </div>
-                                                                                        <div className="p-3 bg-purple-50 rounded-xl text-purple-400">
-                                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                                                                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                                                                                            </svg>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
-                                                                    ) : (
-                                                                        <p className="text-center py-8 text-slate-400 italic bg-slate-50 rounded-xl border border-dashed border-slate-200">ไม่มีข้อมูลหมู่บ้าน</p>
-                                                                    )}
-                                                                </div>
-                                                            </motion.div>
+                                        {hospitals.map((hos) => {
+                                            const theme = getThemeColors(hos.hostype_new);
+                                            return (
+                                                <React.Fragment key={hos.hospcode}>
+                                                    <tr
+                                                        className={`transition-all cursor-pointer group ${theme.hover} ${expandedHosp === hos.hospcode ? `${theme.active} shadow-sm` : ''}`}
+                                                        onClick={() => toggleExpand(hos.hospcode)}
+                                                    >
+                                                        <td className={`py-5 pl-4 font-mono text-sm font-bold ${theme.text}`}>{hos.hospcode}</td>
+                                                        <td className={`py-5 font-bold ${theme.text}`}>{hos.hospname}</td>
+                                                        <td className="py-5 text-slate-600 font-medium">{hos.tmb_name}</td>
+                                                        <td className={`py-5 pr-4 text-right font-black text-xl tracking-tight ${theme.text}`}>
+                                                            {hos.house ? formatNumber(hos.house) : '-'}
                                                         </td>
                                                     </tr>
-                                                )}
-                                            </React.Fragment>
-                                        ))}
+                                                    {expandedHosp === hos.hospcode && (
+                                                        <tr>
+                                                            <td colSpan={4} className="p-0 border-none">
+                                                                <motion.div
+                                                                    initial={{ opacity: 0, height: 0 }}
+                                                                    animate={{ opacity: 1, height: 'auto' }}
+                                                                    className={`${theme.bgLight} p-6 shadow-inner`}
+                                                                >
+                                                                    <div className={`bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border ${theme.border}`}>
+                                                                        <div className="flex justify-between items-center mb-6">
+                                                                            <div className="flex items-center gap-3">
+                                                                                <div className={`p-2 ${theme.bgIcon} rounded-lg ${theme.text}`}>
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                                                                                        <circle cx="12" cy="10" r="3" />
+                                                                                    </svg>
+                                                                                </div>
+                                                                                <h4 className="font-bold text-slate-700 uppercase tracking-tighter">
+                                                                                    รายชื่อหมู่บ้านในเขตรับผิดชอบ ({villages[hos.hospcode]?.length || 0})
+                                                                                </h4>
+                                                                            </div>
+                                                                        </div>
+                                                                        {villages[hos.hospcode] && villages[hos.hospcode].length > 0 ? (
+                                                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                                                {villages[hos.hospcode].map((v, i) => (
+                                                                                    <div key={`${v.villagecode}-${i}`} className="flex flex-col p-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                                                                                        <div className="flex items-baseline gap-2 mb-4 border-b border-slate-50 pb-2">
+                                                                                            <span className={`${theme.textLight} text-xs font-mono font-bold`}>{v.villagecode.slice(-2)}</span>
+                                                                                            <span className="text-slate-700 font-black truncate">{v.villagename}</span>
+                                                                                        </div>
+                                                                                        <div className="flex justify-between items-center">
+                                                                                            <div className="flex flex-col">
+                                                                                                <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider mb-0.5">จำนวนบ้าน</span>
+                                                                                                <span className={`${theme.textDark} font-black text-2xl tracking-tighter`}>{formatNumber(v.households)}</span>
+                                                                                            </div>
+                                                                                            <div className={`p-3 ${theme.bg} rounded-xl ${theme.textLight}`}>
+                                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                                                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                                                                                </svg>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                ))}
+                                                                            </div>
+                                                                        ) : (
+                                                                            <p className="text-center py-8 text-slate-400 italic bg-slate-50 rounded-xl border border-dashed border-slate-200">ไม่มีข้อมูลหมู่บ้าน</p>
+                                                                        )}
+                                                                    </div>
+                                                                </motion.div>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </React.Fragment>
+                                            );
+                                        })}
                                         <tr className="border-t-2 border-purple-100 bg-white/40 font-bold text-slate-800">
                                             <td colSpan={3} className="py-6 text-right pr-6 text-xl">รวมทั้งหมด</td>
                                             <td className="py-6 pr-4 text-right text-slate-800 text-3xl font-black tracking-tight drop-shadow-sm">
