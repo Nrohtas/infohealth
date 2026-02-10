@@ -30,7 +30,7 @@ const SourceReference = ({
                 className="group flex items-center gap-2 text-slate-400 hover:text-indigo-500 transition-all duration-300"
             >
                 <div className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-indigo-400 transition-colors" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em]">{label}</span>
+                <span className="text-[14px] font-bold uppercase tracking-[0.2em]">{label}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                     <polyline points="15 3 21 3 21 9" />
@@ -38,7 +38,7 @@ const SourceReference = ({
                 </svg>
             </a>
             {subTitle && (
-                <p className="text-[9px] text-slate-300 font-medium tracking-wider text-center max-w-[250px]">
+                <p className="text-[11px] text-slate-300 font-medium tracking-wider text-center max-w-[300px]">
                     {subTitle}
                 </p>
             )}

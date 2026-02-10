@@ -266,7 +266,7 @@ export default function PopulationPage() {
                         href="https://docs.google.com/spreadsheets/d/128NN3wWOqzc6LwrMVkYPPYIC9yJVojQb5DUUhky92kM/edit?gid=1893216023#gid=1893216023"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 hover:text-indigo-500 transition-all duration-300 flex items-center gap-2"
+                        className="text-[14px] font-bold uppercase tracking-[0.2em] text-slate-400 hover:text-indigo-500 transition-all duration-300 flex items-center gap-2.5"
                     >
                         <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
                         ประชากรกลางปีรายอายุ (Google Sheet)
@@ -277,6 +277,6 @@ export default function PopulationPage() {
                     />
                 </div>
             </motion.div>
-        </main>
+        </main >
     );
 }
