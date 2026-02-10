@@ -141,6 +141,15 @@ export default function PopulationDistrictPage({ params }: PageProps) {
         return 'text-gray-900 font-bold';
     };
 
+    const getThemeColors = (hostype: string) => {
+        const greenTypes = ['5', '7', '8', '11', '18'];
+        const purpleTypes = ['21'];
+
+        if (greenTypes.includes(hostype)) return { bg: 'bg-green-100', text: 'text-green-600' };
+        if (purpleTypes.includes(hostype)) return { bg: 'bg-purple-100', text: 'text-purple-600' };
+        return { bg: 'bg-slate-100', text: 'text-slate-600' };
+    };
+
     return (
         <div className="min-h-screen flex flex-col items-center py-8 bg-gradient-to-br from-[#E3F2FD] via-[#F3E5F5] to-[#E3F2FD]">
             <motion.div
@@ -250,96 +259,99 @@ export default function PopulationDistrictPage({ params }: PageProps) {
                                     <tr><td colSpan={6} className="text-center py-12 text-slate-400">ไม่พบข้อมูล</td></tr>
                                 ) : (
                                     <>
-                                        {hospitals.map((hos) => (
-                                            <React.Fragment key={hos.hospcode}>
-                                                <tr
-                                                    className={`transition-all cursor-pointer group hover:bg-white/60 ${expandedHosp === hos.hospcode ? 'bg-white/60 shadow-sm' : ''}`}
-                                                    onClick={() => toggleExpand(hos.hospcode)}
-                                                >
-                                                    <td className={`py-5 pl-4 font-mono text-sm ${getHostColor(hos.hostype_new)}`}>{hos.hospcode}</td>
-                                                    <td className={`py-5 ${getHostColor(hos.hostype_new)}`}>{hos.hospname}</td>
-                                                    <td className="py-5 text-slate-600">{hos.tmb_name}</td>
-                                                    <td className="py-5 text-right text-slate-800 font-bold text-lg">
-                                                        {hos.population ? new Intl.NumberFormat('th-TH').format(hos.population) : '-'}
-                                                    </td>
-                                                    <td className="py-5 text-right text-blue-600 font-bold">
-                                                        {hos.male ? new Intl.NumberFormat('th-TH').format(hos.male) : '-'}
-                                                    </td>
-                                                    <td className="py-5 pr-4 text-right text-pink-600 font-bold">
-                                                        {hos.female ? new Intl.NumberFormat('th-TH').format(hos.female) : '-'}
-                                                    </td>
-                                                </tr>
-                                                {expandedHosp === hos.hospcode && (
-                                                    <tr>
-                                                        <td colSpan={6} className="p-0 border-none">
-                                                            <motion.div
-                                                                initial={{ opacity: 0, height: 0 }}
-                                                                animate={{ opacity: 1, height: 'auto' }}
-                                                                exit={{ opacity: 0, height: 0 }}
-                                                                className="bg-indigo-50/30 p-6 shadow-inner"
-                                                            >
-                                                                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-white/60">
-                                                                    <div className="flex justify-between items-center mb-6">
-                                                                        <div className="flex items-center gap-3">
-                                                                            <div className="p-2 bg-indigo-100 rounded-lg text-indigo-600">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                                                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                                                                                    <polyline points="9 22 9 12 15 12 15 22" />
-                                                                                </svg>
-                                                                            </div>
-                                                                            <h4 className="font-bold text-slate-700">
-                                                                                รายชื่อหมู่บ้านในเขตรับผิดชอบ ({villages[hos.hospcode]?.length || 0})
-                                                                            </h4>
-                                                                        </div>
-                                                                        <div className="flex gap-4 text-xs font-bold uppercase text-slate-400 tracking-wider">
-                                                                            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-slate-800"></span> รวม</span>
-                                                                            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span> ชาย</span>
-                                                                            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-pink-500"></span> หญิง</span>
-                                                                        </div>
-                                                                    </div>
-                                                                    {villages[hos.hospcode] && villages[hos.hospcode].length > 0 ? (
-                                                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                                            {villages[hos.hospcode].map((v, i) => (
-                                                                                <div key={`${v.villagecode}-${i}`} className="flex flex-col p-4 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                                                                                    <div className="flex items-baseline gap-2 mb-4 border-b border-slate-50 pb-2">
-                                                                                        <span className="text-slate-400 text-xs font-mono">{v.villagecode.slice(-2)}</span>
-                                                                                        <span className="text-slate-700 font-bold truncate">{v.villagename}</span>
-                                                                                    </div>
-                                                                                    <div className="flex justify-between items-center">
-                                                                                        <div className="flex flex-col">
-                                                                                            <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider mb-0.5">รวม</span>
-                                                                                            <span className="text-slate-800 font-black text-lg">{new Intl.NumberFormat('th-TH').format(v.population)}</span>
-                                                                                        </div>
-                                                                                        <div className="w-px h-8 bg-slate-100"></div>
-                                                                                        <div className="flex flex-col items-center">
-                                                                                            <span className="text-[10px] text-blue-400 uppercase font-black tracking-wider mb-0.5">ชาย</span>
-                                                                                            <span className="text-blue-600 font-bold">{new Intl.NumberFormat('th-TH').format(v.male)}</span>
-                                                                                        </div>
-                                                                                        <div className="w-px h-8 bg-slate-100"></div>
-                                                                                        <div className="flex flex-col items-end">
-                                                                                            <span className="text-[10px] text-pink-400 uppercase font-black tracking-wider mb-0.5">หญิง</span>
-                                                                                            <span className="text-pink-600 font-bold">{new Intl.NumberFormat('th-TH').format(v.female)}</span>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
-                                                                    ) : (
-                                                                        <div className="flex flex-col items-center justify-center py-8 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-2 opacity-50">
-                                                                                <circle cx="12" cy="12" r="10" />
-                                                                                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
-                                                                            </svg>
-                                                                            <p className="text-sm italic">ไม่มีข้อมูลหมู่บ้าน</p>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </motion.div>
+                                        {hospitals.map((hos) => {
+                                            const theme = getThemeColors(hos.hostype_new);
+                                            return (
+                                                <React.Fragment key={hos.hospcode}>
+                                                    <tr
+                                                        className={`transition-all cursor-pointer group hover:bg-white/60 ${expandedHosp === hos.hospcode ? 'bg-white/60 shadow-sm' : ''}`}
+                                                        onClick={() => toggleExpand(hos.hospcode)}
+                                                    >
+                                                        <td className={`py-5 pl-4 font-mono text-sm ${getHostColor(hos.hostype_new)}`}>{hos.hospcode}</td>
+                                                        <td className={`py-5 ${getHostColor(hos.hostype_new)}`}>{hos.hospname}</td>
+                                                        <td className="py-5 text-slate-600">{hos.tmb_name}</td>
+                                                        <td className="py-5 text-right text-slate-800 font-bold text-lg">
+                                                            {hos.population ? new Intl.NumberFormat('th-TH').format(hos.population) : '-'}
+                                                        </td>
+                                                        <td className="py-5 text-right text-blue-600 font-bold">
+                                                            {hos.male ? new Intl.NumberFormat('th-TH').format(hos.male) : '-'}
+                                                        </td>
+                                                        <td className="py-5 pr-4 text-right text-pink-600 font-bold">
+                                                            {hos.female ? new Intl.NumberFormat('th-TH').format(hos.female) : '-'}
                                                         </td>
                                                     </tr>
-                                                )}
-                                            </React.Fragment>
-                                        ))}
+                                                    {expandedHosp === hos.hospcode && (
+                                                        <tr>
+                                                            <td colSpan={6} className="p-0 border-none">
+                                                                <motion.div
+                                                                    initial={{ opacity: 0, height: 0 }}
+                                                                    animate={{ opacity: 1, height: 'auto' }}
+                                                                    exit={{ opacity: 0, height: 0 }}
+                                                                    className="bg-indigo-50/30 p-6 shadow-inner"
+                                                                >
+                                                                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-white/60">
+                                                                        <div className="flex justify-between items-center mb-6">
+                                                                            <div className="flex items-center gap-3">
+                                                                                <div className={`p-2 rounded-lg ${theme.bg} ${theme.text}`}>
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                                                                        <polyline points="9 22 9 12 15 12 15 22" />
+                                                                                    </svg>
+                                                                                </div>
+                                                                                <h4 className={`font-bold ${theme.text}`}>
+                                                                                    รายชื่อหมู่บ้านในเขตรับผิดชอบ ({villages[hos.hospcode]?.length || 0})
+                                                                                </h4>
+                                                                            </div>
+                                                                            <div className="flex gap-4 text-xs font-bold uppercase text-slate-400 tracking-wider">
+                                                                                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-slate-800"></span> รวม</span>
+                                                                                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span> ชาย</span>
+                                                                                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-pink-500"></span> หญิง</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        {villages[hos.hospcode] && villages[hos.hospcode].length > 0 ? (
+                                                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                                                {villages[hos.hospcode].map((v, i) => (
+                                                                                    <div key={`${v.villagecode}-${i}`} className="flex flex-col p-4 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                                                                                        <div className="flex items-baseline gap-2 mb-4 border-b border-slate-50 pb-2">
+                                                                                            <span className="text-slate-400 text-xs font-mono">{v.villagecode.slice(-2)}</span>
+                                                                                            <span className="text-slate-700 font-bold truncate">{v.villagename}</span>
+                                                                                        </div>
+                                                                                        <div className="flex justify-between items-center">
+                                                                                            <div className="flex flex-col">
+                                                                                                <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider mb-0.5">รวม</span>
+                                                                                                <span className="text-slate-800 font-black text-lg">{new Intl.NumberFormat('th-TH').format(v.population)}</span>
+                                                                                            </div>
+                                                                                            <div className="w-px h-8 bg-slate-100"></div>
+                                                                                            <div className="flex flex-col items-center">
+                                                                                                <span className="text-[10px] text-blue-400 uppercase font-black tracking-wider mb-0.5">ชาย</span>
+                                                                                                <span className="text-blue-600 font-bold">{new Intl.NumberFormat('th-TH').format(v.male)}</span>
+                                                                                            </div>
+                                                                                            <div className="w-px h-8 bg-slate-100"></div>
+                                                                                            <div className="flex flex-col items-end">
+                                                                                                <span className="text-[10px] text-pink-400 uppercase font-black tracking-wider mb-0.5">หญิง</span>
+                                                                                                <span className="text-pink-600 font-bold">{new Intl.NumberFormat('th-TH').format(v.female)}</span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                ))}
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="flex flex-col items-center justify-center py-8 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-2 opacity-50">
+                                                                                    <circle cx="12" cy="12" r="10" />
+                                                                                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                                                                                </svg>
+                                                                                <p className="text-sm italic">ไม่มีข้อมูลหมู่บ้าน</p>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                </motion.div>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </React.Fragment>
+                                            );
+                                        })}
                                         <tr className="border-t-2 border-indigo-100 bg-white/40 font-bold text-slate-800">
                                             <td className="py-6 pl-4 text-lg"></td>
                                             <td colSpan={2} className="py-6 text-right pr-4 text-lg">รวมทั้งหมด</td>
@@ -354,7 +366,8 @@ export default function PopulationDistrictPage({ params }: PageProps) {
                                             </td>
                                         </tr>
                                     </>
-                                )}
+                                )
+                                }
                             </tbody>
                         </table>
                     </div>

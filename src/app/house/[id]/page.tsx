@@ -147,12 +147,12 @@ export default function HouseDistrictPage({ params }: PageProps) {
                 <div className="rounded-[30px] bg-white/70 backdrop-blur-xl shadow-xl border border-white/60 p-6 md:p-8 mb-8 relative overflow-visible">
                     <div className="relative z-10 w-full overflow-x-auto">
                         <table className="w-full border-collapse">
-                            <thead>
-                                <tr className="text-slate-600 text-sm bg-purple-50/90 backdrop-blur-md rounded-xl">
-                                    <th className="py-4 pl-4 w-24 rounded-l-xl text-left font-bold">รหัส</th>
-                                    <th className="py-4 text-left font-bold">ชื่อหน่วยบริการ</th>
-                                    <th className="py-4 text-left font-bold">ตำบล</th>
-                                    <th className="py-4 text-right pr-4 rounded-r-xl font-bold">
+                            <thead className="sticky top-[80px] z-30">
+                                <tr className="text-slate-600 text-sm bg-purple-50/95 backdrop-blur-md rounded-xl shadow-sm">
+                                    <th className="py-4 pl-4 w-24 rounded-l-xl text-left font-bold sticky top-[80px] bg-purple-50/95 backdrop-blur-md z-30">รหัส</th>
+                                    <th className="py-4 text-left font-bold sticky top-[80px] bg-purple-50/95 backdrop-blur-md z-30">ชื่อหน่วยบริการ</th>
+                                    <th className="py-4 text-left font-bold sticky top-[80px] bg-purple-50/95 backdrop-blur-md z-30">ตำบล</th>
+                                    <th className="py-4 text-right pr-4 rounded-r-xl font-bold sticky top-[80px] bg-purple-50/95 backdrop-blur-md z-30">
                                         <div className="flex items-center justify-end gap-2 text-purple-600">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                                 <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
