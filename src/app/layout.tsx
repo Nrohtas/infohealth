@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 import Header from "@/components/Header";
 import UtilityBar from "@/components/UtilityBar";
 import Footer from "@/components/Footer";
+import { Suspense } from "react";
 
 export default function RootLayout({
   children,
@@ -36,7 +37,9 @@ export default function RootLayout({
       >
         <div className="flex flex-col min-h-screen bg-background">
           <Header />
-          <UtilityBar />
+          <Suspense fallback={<div className="h-20" />}>
+            <UtilityBar />
+          </Suspense>
           <main className="flex-1">
             {children}
           </main>

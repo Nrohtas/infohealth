@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, use } from 'react';
+import React, { useEffect, useState, use, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
@@ -43,7 +43,7 @@ const itemVariants: Variants = {
     }
 };
 
-export default function HouseDistrictPage({ params }: PageProps) {
+function HouseDistrictContent({ params }: PageProps) {
     const { id } = use(params);
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -288,5 +288,13 @@ export default function HouseDistrictPage({ params }: PageProps) {
                 <SourceReference />
             </motion.div>
         </div >
+    );
+}
+
+export default function HouseDistrictPage(props: PageProps) {
+    return (
+        <Suspense fallback={<div className="p-8 text-center animate-pulse text-indigo-500">กำลังโหลด...</div>}>
+            <HouseDistrictContent {...props} />
+        </Suspense>
     );
 }

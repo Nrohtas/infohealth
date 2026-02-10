@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import SourceReference from '@/components/SourceReference';
@@ -43,7 +43,7 @@ const itemVariants = {
     }
 };
 
-export default function PopulationPage() {
+function PopulationContent() {
     const searchParams = useSearchParams();
     const yearParam = searchParams.get('year');
     const year = yearParam ? Number(yearParam) : 2568;
@@ -277,5 +277,13 @@ export default function PopulationPage() {
                 </div>
             </motion.div>
         </main >
+    );
+}
+
+export default function PopulationPage() {
+    return (
+        <Suspense fallback={<div className="p-8 text-center animate-pulse text-indigo-500">กำลังโหลด...</div>}>
+            <PopulationContent />
+        </Suspense>
     );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, use } from 'react';
+import React, { useEffect, useState, use, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
@@ -41,7 +41,7 @@ const itemVariants: Variants = {
     }
 };
 
-export default function TambonPage({ params }: PageProps) {
+function TambonContent({ params }: PageProps) {
     // Unwrap params using React.use()
     const { id } = use(params); // id is tambon_code (6 digits)
     const searchParams = useSearchParams();
@@ -53,7 +53,7 @@ export default function TambonPage({ params }: PageProps) {
     const affiliation = searchParams.get('affiliation') || '';
 
     const [hospitals, setHospitals] = useState<Hospital[]>([]);
-    const [tambonTotal, setTambonTotal] = useState({ population: 0, households: 0 });
+    const [tambonTotal, setTambonTotal] = useState({ population: 0, house: 0 });
     const [loading, setLoading] = useState(true);
     const [villages, setVillages] = useState<Record<string, any[]>>({});
     const [expandedHosp, setExpandedHosp] = useState<string | null>(null);
@@ -70,7 +70,7 @@ export default function TambonPage({ params }: PageProps) {
                 const hospRes = await fetch(`/api/hospitals?tambon_code=${id}&year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`);
                 const hospData = await hospRes.json();
                 setHospitals(hospData.hospitals || []);
-                setTambonTotal(hospData.districtTotal || { population: 0, households: 0 });
+                setTambonTotal(hospData.districtTotal || { population: 0, house: 0 });
 
                 if (hospData.hospitals && hospData.hospitals.length > 0) {
                     setTambonName(hospData.hospitals[0].tmb_name);
@@ -284,7 +284,7 @@ export default function TambonPage({ params }: PageProps) {
                                             </td>
                                             {year !== 2567 && (
                                                 <td className="py-4 pr-4 text-right">
-                                                    {new Intl.NumberFormat('th-TH').format(tambonTotal.households)}
+                                                    {new Intl.NumberFormat('th-TH').format(tambonTotal.house)}
                                                 </td>
                                             )}
                                         </tr>
@@ -300,5 +300,13 @@ export default function TambonPage({ params }: PageProps) {
                 />
             </motion.div>
         </div>
+    );
+}
+
+export default function TambonPage(props: PageProps) {
+    return (
+        <Suspense fallback={<div className="p-8 text-center animate-pulse text-indigo-500">กำลังโหลด...</div>}>
+            <TambonContent {...props} />
+        </Suspense>
     );
 }

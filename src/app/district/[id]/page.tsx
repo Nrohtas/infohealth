@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, use } from 'react';
+import React, { useEffect, useState, use, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
@@ -41,7 +41,7 @@ const itemVariants: Variants = {
     }
 };
 
-export default function DistrictPage({ params }: PageProps) {
+function DistrictContent({ params }: PageProps) {
     // Unwrap params using React.use()
     const { id } = use(params);
     const searchParams = useSearchParams();
@@ -306,5 +306,13 @@ export default function DistrictPage({ params }: PageProps) {
                 />
             </motion.div>
         </div>
+    );
+}
+
+export default function DistrictPage(props: PageProps) {
+    return (
+        <Suspense fallback={<div className="p-8 text-center animate-pulse text-indigo-500">กำลังโหลด...</div>}>
+            <DistrictContent {...props} />
+        </Suspense>
     );
 }
