@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 
 import Header from "@/components/Header";
 import UtilityBar from "@/components/UtilityBar";
+import Footer from "@/components/Footer";
 
 export default function RootLayout({
   children,
@@ -39,6 +40,7 @@ export default function RootLayout({
           <main className="flex-1">
             {children}
           </main>
+          <Footer />
         </div>
       </body>
     </html>
