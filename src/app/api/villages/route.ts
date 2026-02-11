@@ -32,15 +32,15 @@ export async function GET(request: Request) {
         }
 
         const yy = String(year).slice(-2);
-        const popTable = `infohealth.pop${yy}06`;
-        let houseTable = `infohealth.house${year}`;
+        const popTable = `pop${yy}06`;
+        let houseTable = `house${year}`;
         let houseFieldName = year >= 2568 ? 'house' : 'household';
 
         if (year === 2568) {
-            houseTable = 'infohealth.house6712';
+            houseTable = 'house6712';
             houseFieldName = 'house';
         } else if (year === 2567) {
-            houseTable = 'infohealth.house6612';
+            houseTable = 'house6612';
             houseFieldName = 'house';
         }
 

@@ -8,7 +8,7 @@ export async function GET() {
     try {
         const [rows] = await pool.query<RowDataPacket[]>(`
             SELECT amp_code as code, amp_name as name
-            FROM infohealth.ampur
+            FROM ampur
             ORDER BY amp_code
         `);
 

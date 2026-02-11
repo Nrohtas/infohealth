@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
         const [rows] = await pool.query<RowDataPacket[]>(`
             SELECT tamboncodefull as code, tambonname as name
-            FROM infohealth.tambon
+            FROM tambon
             WHERE ampurcode = ?
             ORDER BY tamboncodefull
         `, [ampurcode]);

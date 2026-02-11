@@ -10,7 +10,7 @@ export async function GET() {
         const [rows] = await pool.query<RowDataPacket[]>('SELECT 1 as val');
 
         try {
-            const [popRows] = await pool.query<RowDataPacket[]>('SELECT count(*) as count FROM infohealth.pop6806');
+            const [popRows] = await pool.query<RowDataPacket[]>('SELECT count(*) as count FROM pop6806');
             return NextResponse.json({ status: 'ok', db_check: rows[0], pop_count: popRows[0] });
         } catch (popError) {
             return NextResponse.json({ status: 'error', message: 'pop table error', details: (popError as Error).message }, { status: 500 });

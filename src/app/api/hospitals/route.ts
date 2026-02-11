@@ -38,10 +38,10 @@ export async function GET(request: Request) {
         let houseFieldName = year >= 2568 ? 'house' : 'household';
 
         if (year === 2568) {
-            houseTable = 'infohealth.house6712';
+            houseTable = 'house6712';
             houseFieldName = 'house';
         } else if (year === 2567) {
-            houseTable = 'infohealth.house6612';
+            houseTable = 'house6612';
             houseFieldName = 'house';
         }
 
@@ -80,7 +80,7 @@ export async function GET(request: Request) {
                 (SELECT SUM(CAST(maleall AS UNSIGNED)) FROM ${popTable} WHERE hospcode = h.hospcode) as male,
                 (SELECT SUM(CAST(femaleall AS UNSIGNED)) FROM ${popTable} WHERE hospcode = h.hospcode) as female,
                 (SELECT SUM(CAST(${houseFieldName} AS UNSIGNED)) FROM ${houseTable} WHERE hospcode = h.hospcode ${(year === 2567 || year === 2568) ? "AND villagecode != '0'" : ""}) as house
-            FROM infohealth.hospital h
+            FROM hospital h
             WHERE ${whereConditions.join(' AND ')}
             ORDER BY h.hospcode
         `, queryParams);

@@ -19,10 +19,10 @@ export async function GET(request: Request) {
         let houseFieldName = year >= 2568 ? 'house' : 'household';
 
         if (year === 2568) {
-            houseTable = 'infohealth.house6712';
+            houseTable = 'house6712';
             houseFieldName = 'house';
         } else if (year === 2567) {
-            houseTable = 'infohealth.house6612';
+            houseTable = 'house6612';
             houseFieldName = 'house';
         }
 
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
         let affiliationJoin = "";
         let affiliationFilter = "";
         if (affiliation) {
-            affiliationJoin = " JOIN infohealth.hospital h ON p.hospcode = h.hospcode ";
+            affiliationJoin = " JOIN hospital h ON p.hospcode = h.hospcode ";
             if (affiliation === 'moph') {
                 affiliationFilter = " AND h.hostype_new IN ('5', '7', '8', '11', '18')";
             } else if (affiliation === 'local') {
@@ -104,7 +104,7 @@ export async function GET(request: Request) {
 
         const [hospStatsRows] = await pool.query<RowDataPacket[]>(`
             SELECT COUNT(DISTINCT hospcode) as count 
-            FROM infohealth.hospital 
+            FROM hospital 
             WHERE provcode = '65' ${hospGeoFilter}
         `, [geoParam]);
         totalHospitals = hospStatsRows[0]?.count || 0;
