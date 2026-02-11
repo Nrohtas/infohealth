@@ -64,7 +64,7 @@ export async function GET(request: Request) {
             geoFilter = " AND tamboncode = ? ";
             geoParam = tambonId;
         } else if (districtId) {
-            geoFilter = " AND ampurcode = ? ";
+            geoFilter = " AND LEFT(tamboncode, 4) = ? ";
             geoParam = districtId;
         }
 
@@ -128,16 +128,17 @@ export async function GET(request: Request) {
         // Get District Population Breakdown
         const [popDistRows] = await pool.query<RowDataPacket[]>(`
             SELECT 
-                p.ampurcode, 
-                p.ampurname, 
+                LEFT(p.tamboncode, 4) as ampurcode, 
+                a.amp_name as ampurname, 
                 SUM(CAST(p.popall AS UNSIGNED)) as pop,
                 SUM(CAST(p.maleall AS UNSIGNED)) as male,
                 SUM(CAST(p.femaleall AS UNSIGNED)) as female
             FROM ${popTable} p
+            JOIN ampur a ON LEFT(p.tamboncode, 4) = a.amp_code
             ${affiliationJoin}
-            WHERE p.provincecode = '65' AND p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtId ? " AND p.ampurcode = ? " : ""} ${tambonId ? " AND p.tamboncode = ? " : ""}
-            GROUP BY p.ampurcode, p.ampurname
-            ORDER BY p.ampurcode
+            WHERE p.provincecode = '65' AND LEFT(p.tamboncode, 4) BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtId ? " AND LEFT(p.tamboncode, 4) = ? " : ""} ${tambonId ? " AND p.tamboncode = ? " : ""}
+            GROUP BY LEFT(p.tamboncode, 4), a.amp_name
+            ORDER BY ampurcode
         `, districtId || tambonId ? [districtId || tambonId] : []);
 
         popDistRows.forEach((row: any) => {
@@ -167,12 +168,12 @@ export async function GET(request: Request) {
         house = houseTotalRows[0]?.household || 0;
 
         const [houseDistRows] = await pool.query<RowDataPacket[]>(`
-            SELECT p.ampurcode, p.ampurname, SUM(CAST(p.${houseFieldName} AS UNSIGNED)) as house 
+            SELECT LEFT(p.tamboncode, 4) as ampurcode, SUM(CAST(p.${houseFieldName} AS UNSIGNED)) as house 
             FROM ${houseTable} p
             ${affiliationJoin}
-            WHERE p.ampurcode BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtId ? " AND p.ampurcode = ? " : ""} ${tambonId ? " AND p.tamboncode = ? " : ""} ${houseExtraFilter}
-            GROUP BY p.ampurcode, p.ampurname
-            ORDER BY p.ampurcode
+            WHERE LEFT(p.tamboncode, 4) BETWEEN '6501' AND '6509' ${affiliationFilter} ${districtId ? " AND LEFT(p.tamboncode, 4) = ? " : ""} ${tambonId ? " AND p.tamboncode = ? " : ""} ${houseExtraFilter}
+            GROUP BY LEFT(p.tamboncode, 4)
+            ORDER BY ampurcode
         `, districtId || tambonId ? [districtId || tambonId] : []);
 
         houseDistRows.forEach((row: any) => {

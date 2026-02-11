@@ -16,10 +16,10 @@ export async function GET(request: Request) {
         const queryParams = [];
 
         if (tamboncode) {
-            whereClause = "WHERE tambolcode = ?";
+            whereClause = "WHERE tamboncode = ?";
             queryParams.push(tamboncode);
         } else if (ampurcode) {
-            whereClause = "WHERE ampurcode = ?";
+            whereClause = "WHERE LEFT(tamboncode, 4) = ?";
             queryParams.push(ampurcode);
         }
 

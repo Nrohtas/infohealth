@@ -63,7 +63,7 @@ export async function GET(request: Request) {
         let totalParams: any[] = [];
 
         if (ampurcode) {
-            totalWhere = "ampurcode = ?";
+            totalWhere = "LEFT(tamboncode, 4) = ?";
             totalParams = [ampurcode];
         } else if (tambon_code) {
             totalWhere = "tamboncode = ?";

@@ -11,7 +11,7 @@ async function run() {
         database: process.env.DB_NAME,
     });
 
-    const ampurcode = '6501';
+    const ampurcode = '6505';
     const year: number = 2568;
 
     // Logic from route.ts
@@ -29,7 +29,7 @@ async function run() {
     }
 
     const houseWhere = (year === 2567 || year === 2568) ? "AND villagecode != '0'" : "";
-    const whereClause = "p.ampurcode = ?";
+    const whereClause = "LEFT(p.tamboncode, 4) = ?";
     const queryParams = [ampurcode];
 
     const query = `
@@ -48,7 +48,7 @@ async function run() {
             WHERE 1=1 ${houseWhere}
             GROUP BY villagecode
         ) h ON p.villagecode = h.villagecode
-        WHERE ${whereClause} AND p.hospcode = '07476'
+        WHERE ${whereClause} AND p.hospcode = '07553'
         ORDER BY p.hospcode, p.villagecode
         LIMIT 5
     `;

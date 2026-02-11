@@ -25,7 +25,7 @@ export async function GET(request: Request) {
             if (!/^\d{4}$/.test(ampurcode)) {
                 return NextResponse.json({ error: 'Invalid ampurcode format' }, { status: 400 });
             }
-            whereConditions.push("p.ampurcode = ?");
+            whereConditions.push("LEFT(p.tamboncode, 4) = ?");
             queryParams.push(ampurcode);
         } else {
             return NextResponse.json({ error: 'Missing ampurcode or tambon_code parameter' }, { status: 400 });
