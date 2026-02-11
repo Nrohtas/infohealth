@@ -13,7 +13,7 @@ interface SourceReferenceProps {
 const SourceReference = ({
     url = "https://stat.bora.dopa.go.th/new_stat/webPage/statByYear.php",
     subTitle = "ระบบสถิติจำนวนประชากรและบ้านรายปี",
-    label = "ข้อมูลอ้างอิง: กรมการปกครอง (DOPA)",
+    label = "ที่มา: กรมการปกครอง (DOPA)",
     className = "mt-16 pb-12 flex flex-col items-center justify-center gap-2"
 }: SourceReferenceProps) => {
     return (
