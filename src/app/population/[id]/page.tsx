@@ -151,13 +151,8 @@ function PopulationDistrictContent({ params }: PageProps) {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center py-8 bg-gradient-to-br from-[#E3F2FD] via-[#F3E5F5] to-[#E3F2FD]">
-            <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={containerVariants}
-                className="w-full max-w-7xl px-4 md:px-8"
-            >
+        <div className="min-h-screen py-8 bg-gradient-to-br from-[#E3F2FD] via-[#F3E5F5] to-[#E3F2FD]">
+            <div className="w-full max-w-7xl mx-auto px-4 md:px-8">
                 <motion.div variants={itemVariants} className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                     <div className="flex items-center gap-4">
                         <Link href={`/population?year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`} className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/80 shadow-lg text-indigo-600 hover:scale-110 active:scale-95 transition-all duration-300 backdrop-blur-md border border-white/50">
@@ -175,15 +170,15 @@ function PopulationDistrictContent({ params }: PageProps) {
                     </div>
                 </motion.div>
 
-                <div className="rounded-[30px] bg-white/70 backdrop-blur-xl shadow-xl border border-white/60 p-6 md:p-8 mb-8 relative overflow-visible">
+                <div className="rounded-[30px] bg-white shadow-xl border border-white/60 p-6 md:p-8 mb-8 overflow-visible">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-purple-200/20 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
                     <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-200/20 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none"></div>
 
-                    <div className="relative z-10 w-full">
-                        <table className="w-full border-collapse">
-                            <thead className="sticky top-[100px] z-30">
+                    <div className="w-full max-sm:max-h-[60vh] max-sm:overflow-auto overflow-visible">
+                        <table className="w-full border-separate border-spacing-0">
+                            <thead className="!sticky !top-0 z-[40] shadow-sm">
                                 <tr className="text-slate-600 text-sm bg-indigo-50/95 backdrop-blur-md rounded-xl">
-                                    <th className="py-4 pl-4 w-24 rounded-l-xl text-left sticky top-[100px] bg-indigo-50/95 backdrop-blur-md">
+                                    <th className="py-4 pl-4 w-24 rounded-l-xl text-left bg-indigo-50/95 backdrop-blur-md !sticky !top-0 z-[100] border-b border-indigo-100">
                                         <div className="flex items-center gap-2">
                                             <div className="p-1.5 bg-indigo-100 rounded-lg text-indigo-600">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -195,7 +190,7 @@ function PopulationDistrictContent({ params }: PageProps) {
                                             <span className="font-bold">รหัส</span>
                                         </div>
                                     </th>
-                                    <th className="py-4 text-left sticky top-[96px] bg-indigo-50/95 backdrop-blur-md">
+                                    <th className="py-4 text-left bg-indigo-50/95 backdrop-blur-md !sticky !top-0 z-[100] border-b border-indigo-100">
                                         <div className="flex items-center gap-2">
                                             <div className="p-1.5 bg-blue-100 rounded-lg text-blue-600">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -209,7 +204,7 @@ function PopulationDistrictContent({ params }: PageProps) {
                                             <span className="font-bold">ชื่อหน่วยบริการ</span>
                                         </div>
                                     </th>
-                                    <th className="py-4 text-left sticky top-[96px] bg-indigo-50/95 backdrop-blur-md">
+                                    <th className="py-4 text-left bg-indigo-50/95 backdrop-blur-md !sticky !top-0 z-[100] border-b border-indigo-100">
                                         <div className="flex items-center gap-2">
                                             <div className="p-1.5 bg-purple-100 rounded-lg text-purple-600">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -219,7 +214,7 @@ function PopulationDistrictContent({ params }: PageProps) {
                                             <span className="font-bold">ตำบล</span>
                                         </div>
                                     </th>
-                                    <th className="py-4 text-right sticky top-[96px] bg-purple-50/95 backdrop-blur-md">
+                                    <th className="py-4 text-right bg-purple-50/95 backdrop-blur-md !sticky !top-0 z-[100] border-b border-indigo-100">
                                         <div className="flex items-center justify-end gap-2 text-slate-600">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -230,7 +225,7 @@ function PopulationDistrictContent({ params }: PageProps) {
                                             <span className="font-bold">รวม</span>
                                         </div>
                                     </th>
-                                    <th className="py-4 text-right sticky top-[96px] bg-purple-50/95 backdrop-blur-md">
+                                    <th className="py-4 text-right bg-purple-50/95 backdrop-blur-md !sticky !top-0 z-[100] border-b border-indigo-100">
                                         <div className="flex items-center justify-end gap-2 text-blue-600">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                                 <path d="M16 3h5v5" />
@@ -240,7 +235,7 @@ function PopulationDistrictContent({ params }: PageProps) {
                                             <span className="font-bold">ชาย</span>
                                         </div>
                                     </th>
-                                    <th className="py-4 text-right pr-4 rounded-r-xl sticky top-[96px] bg-purple-50/95 backdrop-blur-md">
+                                    <th className="py-4 text-right pr-4 rounded-r-xl bg-purple-50/95 backdrop-blur-md !sticky !top-0 z-[100] border-b border-indigo-100">
                                         <div className="flex items-center justify-end gap-2 text-pink-600">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                                 <circle cx="12" cy="9" r="6" />
@@ -372,7 +367,7 @@ function PopulationDistrictContent({ params }: PageProps) {
                         </table>
                     </div>
                 </div>
-            </motion.div>
+            </div>
         </div >
     );
 }

@@ -169,7 +169,7 @@ function PopulationContent() {
 
                 {/* Details Row */}
                 <div className="space-y-6">
-                    <div className="flex justify-between items-center sticky top-[100px] z-30 py-6 bg-white/95 backdrop-blur-md -mx-4 px-4 md:-mx-8 md:px-8 border-b border-gray-100 shadow-sm transition-all duration-300">
+                    <div className="flex justify-between items-center py-6 bg-white/95 backdrop-blur-md -mx-4 px-4 md:-mx-8 md:px-8 border-b border-gray-100 shadow-sm transition-all duration-300">
                         <h3 className="font-heading font-black text-black uppercase tracking-tight">ข้อมูลรายอำเภอ</h3>
                         <a
                             href="https://docs.google.com/spreadsheets/d/128NN3wWOqzc6LwrMVkYPPYIC9yJVojQb5DUUhky92kM/edit?gid=1893216023#gid=1893216023"

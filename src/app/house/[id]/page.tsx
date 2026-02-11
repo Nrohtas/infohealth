@@ -153,13 +153,8 @@ function HouseDistrictContent({ params }: PageProps) {
     const formatNumber = (num: number) => new Intl.NumberFormat('th-TH').format(num);
 
     return (
-        <div className="min-h-screen flex flex-col items-center py-8 bg-gradient-to-br from-[#F3E5F5] via-white to-[#F3E5F5]">
-            <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={containerVariants}
-                className="w-full max-w-7xl px-4 md:px-8"
-            >
+        <div className="min-h-screen py-8 bg-gradient-to-br from-[#F3E5F5] via-white to-[#F3E5F5]">
+            <div className="w-full max-w-7xl mx-auto px-4 md:px-8">
                 <motion.div variants={itemVariants} className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                     <div className="flex items-center gap-4">
                         <Link href={`/house?year=${year}${affiliation ? `&affiliation=${affiliation}` : ''}`} className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/80 shadow-lg text-purple-600 hover:scale-110 active:scale-95 transition-all duration-300 backdrop-blur-md border border-white/50">
@@ -177,15 +172,15 @@ function HouseDistrictContent({ params }: PageProps) {
                     </div>
                 </motion.div>
 
-                <div className="rounded-[30px] bg-white/70 backdrop-blur-xl shadow-xl border border-white/60 p-6 md:p-8 mb-8 relative overflow-visible">
-                    <div className="relative z-10 w-full overflow-x-auto">
-                        <table className="w-full border-collapse">
-                            <thead className="sticky top-[80px] z-30">
+                <div className="rounded-[30px] bg-white shadow-xl border border-white/60 p-6 md:p-8 mb-8 overflow-visible">
+                    <div className="w-full max-sm:max-h-[60vh] max-sm:overflow-auto overflow-visible">
+                        <table className="w-full border-separate border-spacing-0">
+                            <thead className="!sticky !top-0 z-[40] shadow-sm">
                                 <tr className="text-slate-600 text-sm bg-purple-50/95 backdrop-blur-md rounded-xl shadow-sm">
-                                    <th className="py-4 pl-4 w-24 rounded-l-xl text-left font-bold sticky top-[80px] bg-purple-50/95 backdrop-blur-md z-30">รหัส</th>
-                                    <th className="py-4 text-left font-bold sticky top-[80px] bg-purple-50/95 backdrop-blur-md z-30">ชื่อหน่วยบริการ</th>
-                                    <th className="py-4 text-left font-bold sticky top-[80px] bg-purple-50/95 backdrop-blur-md z-30">ตำบล</th>
-                                    <th className="py-4 text-right pr-4 rounded-r-xl font-bold sticky top-[80px] bg-purple-50/95 backdrop-blur-md z-30">
+                                    <th className="py-4 pl-4 w-24 rounded-l-xl text-left font-bold bg-purple-50/95 backdrop-blur-md !sticky !top-0 z-[100] border-b border-purple-100">รหัส</th>
+                                    <th className="py-4 text-left font-bold bg-purple-50/95 backdrop-blur-md !sticky !top-0 z-[100] border-b border-purple-100">ชื่อหน่วยบริการ</th>
+                                    <th className="py-4 text-left font-bold bg-purple-50/95 backdrop-blur-md !sticky !top-0 z-[100] border-b border-purple-100">ตำบล</th>
+                                    <th className="py-4 text-right pr-4 rounded-r-xl font-bold bg-purple-50/95 backdrop-blur-md !sticky !top-0 z-[100] border-b border-purple-100">
                                         <div className="flex items-center justify-end gap-2 text-purple-600">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                                 <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
@@ -286,7 +281,7 @@ function HouseDistrictContent({ params }: PageProps) {
                     </div>
                 </div>
                 <SourceReference />
-            </motion.div>
+            </div>
         </div >
     );
 }

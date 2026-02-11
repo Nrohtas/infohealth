@@ -163,7 +163,7 @@ function HouseContent() {
 
                 {/* Details Row */}
                 <div className="space-y-6">
-                    <div className="flex justify-between items-center sticky top-[100px] z-30 py-6 bg-white/95 backdrop-blur-md -mx-4 px-4 md:-mx-8 md:px-8 border-b border-gray-100 shadow-sm transition-all duration-300">
+                    <div className="flex justify-between items-center py-6 bg-white/95 backdrop-blur-md -mx-4 px-4 md:-mx-8 md:px-8 border-b border-gray-100 shadow-sm transition-all duration-300">
                         <h3 className="font-heading font-black text-black uppercase tracking-tight">ข้อมูลบ้านรายอำเภอ</h3>
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">เลือกอำเภอเพื่อดูรายละเอียด</p>
                     </div>
@@ -211,17 +211,7 @@ function HouseContent() {
                                                     <path d="M7 7h10v10" />
                                                     <path d="M7 17 17 7" />
                                                 </svg>
-                                                {ranking === 1 && (
-                                                    <motion.div
-                                                        animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
-                                                        transition={{ repeat: Infinity, duration: 2 }}
-                                                        className="absolute -top-2 -right-2 text-yellow-500 drop-shadow-sm"
-                                                    >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                                            <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1Z" />
-                                                        </svg>
-                                                    </motion.div>
-                                                )}
+                                                {/* Crown Icon Removed */}
                                             </div>
                                         </div>
 

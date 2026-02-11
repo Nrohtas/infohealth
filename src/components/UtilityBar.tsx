@@ -100,6 +100,19 @@ export default function UtilityBar() {
     const pathname = usePathname();
     const year = Number(searchParams.get('year')) || 2568;
 
+    const [openTab, setOpenTab] = useState<string | null>(null);
+    const tabsRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (tabsRef.current && !tabsRef.current.contains(event.target as Node)) {
+                setOpenTab(null);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     // Determine active tab based on pathname
     let activeTab: 'home' | 'population' | 'house' = 'home';
     if (pathname.startsWith('/population')) activeTab = 'population';
@@ -126,6 +139,7 @@ export default function UtilityBar() {
         }
         else if (tab === 'population') router.push(`/population?${params.toString()}`);
         else if (tab === 'house') router.push(`/house?${params.toString()}`);
+        setOpenTab(null);
     };
 
     useEffect(() => {
@@ -270,24 +284,24 @@ export default function UtilityBar() {
     ];
 
     return (
-        <div className="sticky top-0 z-50 w-full px-4 pt-4 pb-2">
+        <div className="w-full px-4 pt-4 pb-2 bg-[#f9fafb]/80 backdrop-blur-md">
             <div className="max-w-7xl mx-auto">
                 <div className="bg-white/70 backdrop-blur-xl border border-white/40 shadow-2xl shadow-gray-200/50 rounded-3xl">
                     <div className="flex flex-col md:flex-row items-center justify-between p-2 gap-4">
 
                         {/* Elegant Tab Group */}
-                        <div className="flex items-center bg-gray-100/50 p-1 rounded-2xl relative">
+                        <div className="flex items-center bg-gray-100/50 p-1 rounded-2xl relative" ref={tabsRef}>
                             {tabs.map((tab: any) => (
                                 <div key={tab.id} className="relative group">
                                     <button
                                         onClick={(e) => {
                                             if (tab.dropdown) {
-                                                e.preventDefault();
+                                                setOpenTab(openTab === tab.id ? null : tab.id);
                                             } else {
                                                 handleTabChange(tab.id as any);
                                             }
                                         }}
-                                        className={`relative z-10 flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 focus:outline-none ${tab.dropdown ? 'cursor-default' : ''}`}
+                                        className={`relative z-10 flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 focus:outline-none ${tab.dropdown ? 'cursor-pointer' : ''}`}
                                     >
                                         {activeTab === tab.id && (
                                             <motion.div
@@ -303,7 +317,7 @@ export default function UtilityBar() {
                                             {tab.label}
                                         </span>
                                         {tab.dropdown && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={`relative z-20 ml-1 opacity-50 transition-transform duration-300 group-hover:rotate-180 ${activeTab === tab.id ? 'text-indigo-950' : 'text-indigo-600/60 group-hover:text-indigo-950'}`}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={`relative z-20 ml-1 opacity-50 transition-transform duration-300 ${openTab === tab.id ? 'rotate-180' : 'group-hover:rotate-180'} ${activeTab === tab.id ? 'text-indigo-950' : 'text-indigo-600/60 group-hover:text-indigo-950'}`}>
                                                 <path d="m6 9 12 0l-6 6z" />
                                             </svg>
                                         )}
@@ -311,7 +325,8 @@ export default function UtilityBar() {
 
                                     {/* Dropdown Menu for Tabs */}
                                     {tab.dropdown && (
-                                        <div className="absolute top-full left-0 mt-2 w-48 bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left z-50">
+                                        <div className={`absolute top-full left-0 mt-2 w-48 bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-xl overflow-hidden transition-all duration-200 transform origin-top-left z-50 
+                                            ${openTab === tab.id ? 'opacity-100 visible' : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible'}`}>
                                             <div className="p-1">
                                                 {tab.dropdown.map((item: any, idx: number) => (
                                                     <button
@@ -320,6 +335,7 @@ export default function UtilityBar() {
                                                             e.stopPropagation();
                                                             const params = new URLSearchParams(searchParams.toString());
                                                             router.push(`${item.href}?${params.toString()}`);
+                                                            setOpenTab(null);
                                                         }}
                                                         className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors flex items-center gap-2 group/item"
                                                     >
