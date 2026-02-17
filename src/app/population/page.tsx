@@ -178,7 +178,7 @@ function PopulationContent() {
                             className="text-[14px] font-bold uppercase tracking-[0.2em] text-slate-400 hover:text-green-600 transition-all duration-300 flex items-center gap-2"
                         >
                             <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                            ประชากรกลางปี (Sheet)
+                            ประชากรกลางปี (Google Sheet)
                         </a>
                     </div>
 
