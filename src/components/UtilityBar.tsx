@@ -278,8 +278,8 @@ export default function UtilityBar() {
 
     const affiliationOptions = [
         { code: "", name: "ทุกสังกัด" },
-        { code: "moph", name: "สธ." },
-        { code: "local", name: "อปท." },
+        { code: "moph", name: "กระทรวงสาธารณสุข" },
+        { code: "local", name: "องค์กรปกครองส่วนท้องถิ่น" },
         { code: "other", name: "อื่นๆ" }
     ];
 

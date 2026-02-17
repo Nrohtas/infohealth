@@ -9,25 +9,39 @@ export async function GET(request: Request) {
         const tamboncode = searchParams.get('tamboncode');
         const year = searchParams.get('year') || '2568';
 
+        const affiliation = searchParams.get('affiliation');
+
         let tableName = "pop6806";
         if (year === '2567') tableName = "pop6706";
 
-        let whereClause = "";
+        let whereClause = "WHERE 1=1";
         const queryParams = [];
 
         if (tamboncode) {
-            whereClause = "WHERE tamboncode = ?";
+            whereClause += " AND p.tamboncode = ?";
             queryParams.push(tamboncode);
         } else if (ampurcode) {
-            whereClause = "WHERE LEFT(tamboncode, 4) = ?";
+            whereClause += " AND LEFT(p.tamboncode, 4) = ?";
             queryParams.push(ampurcode);
+        }
+
+        let affiliationJoin = "";
+        if (affiliation) {
+            affiliationJoin = " JOIN hospital h ON p.hospcode = h.hospcode ";
+            if (affiliation === 'moph') {
+                whereClause += " AND h.hostype_new IN ('5', '7', '8', '11', '18')";
+            } else if (affiliation === 'local') {
+                whereClause += " AND h.hostype_new = '21'";
+            } else if (affiliation === 'other') {
+                whereClause += " AND h.hostype_new NOT IN ('5', '7', '8', '11', '18', '21')";
+            }
         }
 
         // Helper to generate SUM(CAST(...)) for a range
         const sumRange = (prefix: string, start: number, end: number) => {
             let cols = [];
             for (let i = start; i <= end; i++) {
-                cols.push(`CAST(${prefix}age${i} AS UNSIGNED)`);
+                cols.push(`CAST(p.${prefix}age${i} AS UNSIGNED)`);
             }
             return cols.map(c => `COALESCE(${c}, 0)`).join(' + ');
         };
@@ -35,16 +49,16 @@ export async function GET(request: Request) {
         const sumPlus = (prefix: string, start: number) => {
             let cols = [];
             for (let i = start; i <= 100; i++) {
-                cols.push(`CAST(${prefix}age${i} AS UNSIGNED)`);
+                cols.push(`CAST(p.${prefix}age${i} AS UNSIGNED)`);
             }
-            cols.push(`CAST(${prefix}agemore100 AS UNSIGNED)`);
+            cols.push(`CAST(p.${prefix}agemore100 AS UNSIGNED)`);
             return cols.map(c => `COALESCE(${c}, 0)`).join(' + ');
         }
 
         const query = `
             SELECT 
-                SUM(CAST(maleageless1 AS UNSIGNED)) as male_less_1,
-                SUM(CAST(femaleageless1 AS UNSIGNED)) as female_less_1,
+                SUM(CAST(p.maleageless1 AS UNSIGNED)) as male_less_1,
+                SUM(CAST(p.femaleageless1 AS UNSIGNED)) as female_less_1,
 
                 SUM(${sumRange('male', 1, 4)}) as male_1_4,
                 SUM(${sumRange('female', 1, 4)}) as female_1_4,
@@ -94,7 +108,8 @@ export async function GET(request: Request) {
                  SUM(${sumPlus('male', 75)}) as male_75_plus,
                  SUM(${sumPlus('female', 75)}) as female_75_plus
 
-            FROM pop.${tableName}
+            FROM pop.${tableName} p
+            ${affiliationJoin}
             ${whereClause}
         `;
 

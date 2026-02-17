@@ -105,7 +105,7 @@ export async function GET(request: Request) {
         const [hospStatsRows] = await pool.query<RowDataPacket[]>(`
             SELECT COUNT(DISTINCT hospcode) as count 
             FROM hospital 
-            WHERE provcode = '65' ${hospGeoFilter}
+            WHERE provcode = '65' ${hospGeoFilter} ${hospAffiliationFilter}
         `, [geoParam]);
         totalHospitals = hospStatsRows[0]?.count || 0;
 
