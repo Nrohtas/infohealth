@@ -55,6 +55,7 @@ export async function GET(request: Request) {
 
         const query = `
             SELECT 
+                p.ampurcode,
                 p.hospcode,
                 p.villagecode,
                 p.villagename,
@@ -64,11 +65,11 @@ export async function GET(request: Request) {
                 IFNULL(h.households, 0) as households
             FROM ${popTable} p
             LEFT JOIN (
-                SELECT villagecode, SUM(CAST(${houseFieldName} AS UNSIGNED)) as households
+                SELECT ampurcode, tamboncode, villagecode, SUM(CAST(${houseFieldName} AS UNSIGNED)) as households
                 FROM ${houseTable}
                 WHERE 1=1 ${houseWhere}
-                GROUP BY villagecode
-            ) h ON p.villagecode = h.villagecode
+                GROUP BY ampurcode, tamboncode, villagecode
+            ) h ON p.ampurcode = h.ampurcode AND p.tamboncode = h.tamboncode AND p.villagecode = h.villagecode
             WHERE ${whereClause}
             ORDER BY p.hospcode, p.villagecode
         `;
@@ -84,7 +85,9 @@ export async function GET(request: Request) {
             const formattedRows = rows.map((row: any) => ({
                 hospcode: row.hospcode,
                 villagecode: row.villagecode,
-                villagename: row.villagename,
+                villagename: (row.ampurcode >= '6501' && row.ampurcode <= '6509')
+                    ? row.villagename
+                    : `${row.villagename} (เทศบาล)`,
                 population: Number(row.population || 0),
                 male: Number(row.male || 0),
                 female: Number(row.female || 0),
