@@ -284,7 +284,7 @@ export default function UtilityBar() {
     ];
 
     return (
-        <div className="w-full px-4 pt-4 pb-2 bg-[#f9fafb]/80 backdrop-blur-md">
+        <div className="w-full px-4 pt-4 pb-2 bg-[#f9fafb]/80 backdrop-blur-md relative z-[500]">
             <div className="max-w-7xl mx-auto">
                 <div className="bg-white/70 backdrop-blur-xl border border-white/40 shadow-2xl shadow-gray-200/50 rounded-3xl">
                     <div className="flex flex-col md:flex-row items-center justify-between p-2 gap-4">
