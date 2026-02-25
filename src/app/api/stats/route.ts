@@ -37,7 +37,7 @@ export async function GET(request: Request) {
         let affiliationJoin = "";
         let affiliationFilter = "";
         if (affiliation) {
-            affiliationJoin = " JOIN hospital h ON p.hospcode = h.hospcode ";
+            affiliationJoin = " JOIN hospital h ON p.hospcode = h.hospcode AND h.status = '1' ";
             if (affiliation === 'moph') {
                 affiliationFilter = " AND h.hostype_new IN ('5', '7', '8', '11', '18')";
             } else if (affiliation === 'local') {
@@ -105,7 +105,7 @@ export async function GET(request: Request) {
         const [hospStatsRows] = await pool.query<RowDataPacket[]>(`
             SELECT COUNT(DISTINCT hospcode) as count 
             FROM hospital 
-            WHERE provcode = '65' ${hospGeoFilter} ${hospAffiliationFilter}
+            WHERE provcode = '65' AND status = '1' ${hospGeoFilter} ${hospAffiliationFilter}
         `, [geoParam]);
         totalHospitals = hospStatsRows[0]?.count || 0;
 

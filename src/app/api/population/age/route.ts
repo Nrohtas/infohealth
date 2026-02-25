@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 
         let affiliationJoin = "";
         if (affiliation) {
-            affiliationJoin = " JOIN hospital h ON p.hospcode = h.hospcode ";
+            affiliationJoin = " JOIN hospital h ON p.hospcode = h.hospcode AND h.status = '1' ";
             if (affiliation === 'moph') {
                 whereClause += " AND h.hostype_new IN ('5', '7', '8', '11', '18')";
             } else if (affiliation === 'local') {

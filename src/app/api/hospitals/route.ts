@@ -12,7 +12,7 @@ export async function GET(request: Request) {
         const year = parseInt(yearParam, 10);
 
         // Filter conditions
-        let whereConditions = ["h.provcode = '65'"];
+        let whereConditions = ["h.provcode = '65'", "h.status = '1'"];
         const queryParams: any[] = [];
 
         if (ampurcode) {
